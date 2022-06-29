@@ -25,6 +25,7 @@ public:
 	void show(CImage* image, char*);
 	afx_msg void OnBnClickedOk();
 	CString m_name;
+	afx_msg void OnBnClickedBtnApply();
 };
 
 template<typename T>

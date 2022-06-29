@@ -78,6 +78,18 @@
     <ClInclude Include="Harris.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Filter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Enhancement.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Segment.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Binarize.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="bmpLoad2.cpp">
@@ -132,6 +144,18 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Harris.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Filter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Enhancement.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Segment.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Binarize.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

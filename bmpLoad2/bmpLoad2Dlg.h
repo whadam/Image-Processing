@@ -3,20 +3,22 @@
 
 #pragma once
 #include "Image.h"
+#include "Filter.h"
+#include "Enhancement.h"
 
 #define RGB2GRAY(r, g, b) (int)(0.299*(r) + 0.587*(g) + 0.114*(b))
-const int MAX_CORNER = 5000;
+//const int MAX_CORNER = 5000;
 
-typedef struct _LineParam {
-	double rho;	// 직선의 방정식의 ρ
-	double ang;	// theta θ
-} LineParam;
-
-typedef struct _CornerPoints {
-	int num;
-	int x[MAX_CORNER];
-	int y[MAX_CORNER];
-} CornerPoints;
+//typedef struct _LineParam {
+//	double rho;	// 직선의 방정식의 ρ
+//	double ang;	// theta θ
+//} LineParam;
+//
+//typedef struct _CornerPoints {
+//	int num;
+//	int x[MAX_CORNER];
+//	int y[MAX_CORNER];
+//} CornerPoints;
 
 // CbmpLoad2Dlg 대화 상자
 class CbmpLoad2Dlg : public CDialogEx
@@ -112,19 +114,22 @@ public:
 	afx_msg void OnBnClickedBtnCombineYuv();
 	afx_msg void OnBnClickedBtnColorEdge();
 	double CalcDist(double, double, double);
+	afx_msg void OnBnClickedBtnColorHistEq();
+	afx_msg void OnBnClickedBtnBinarize();
+	afx_msg void OnBnClickedBtnBinarizationIter();
 };
 
-template<typename T> 
-inline int limit(T pixel)
-{
-	if (pixel > 255) {
-		return (255 << 16) + (255 << 8) + 255;
-	}
-	else if (pixel < 0) return 0;
-	else {
-		return (pixel<<16) + (pixel<<8) + pixel;
-	}
-}
+//template<typename T> 
+//inline int limit(T pixel)
+//{
+//	if (pixel > 255) {
+//		return (255 << 16) + (255 << 8) + 255;
+//	}
+//	else if (pixel < 0) return 0;
+//	else {
+//		return (pixel<<16) + (pixel<<8) + pixel;
+//	}
+//}
 
 template<typename T>
 inline T limit(const T& value, const T& lower, const T& upper)

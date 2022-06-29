@@ -61,9 +61,28 @@ void EdgeRoberts(CImage* img)
 
 }
 
-void EdgePrewitt(CImage* img)
+void EdgePrewitt(CImage* img, CImage* obj)
 {
+	register int i, j;
+	int w = img->GetWidth();
+	int h = img->GetHeight();
 
+	obj->Create(w,h,24);
+
+	int h1, h2;
+	double hval;
+	for (j = 1; j < h-1; j++) {
+		for (i = 1; i < w-1; i++) {
+			h1 = (img->GetPixel(j+1,i-1)>>16) + (img->GetPixel(j+1,i)>>16) + (img->GetPixel(j+1,i+1)>>16)
+				- (img->GetPixel(j-1,i-1)>>16) - (img->GetPixel(j-1,i)>>16) - (img->GetPixel(j-1,i+1)>>16);
+			h2 = (img->GetPixel(j-1,i+1)>>16) + (img->GetPixel(j,i+1)>>16) + (img->GetPixel(j+1,i+1)>>16)
+				- (img->GetPixel(j-1,i-1)>>16) - (img->GetPixel(j,i-1)>>16) - (img->GetPixel(j+1,i-1)>>16);
+
+			hval = sqrt((double)h1*h1 + h2*h2);
+
+			obj->SetPixel(j,i,limit((int)hval));
+		}
+	}
 }
 
 void EdgeSobel(CImage* img)
@@ -71,70 +90,70 @@ void EdgeSobel(CImage* img)
 
 }
 
-LineParam HoughLine(CImage* img)
-{
-	register int i, j;
-
-	int w = img->GetWidth();
-	int h = img->GetHeight();
-
-	int num_rho = (int)(sqrt((double)w*w + h*h)*2);
-	int num_ang = 360;
-
-	// 0~PI 각도에 해당하는 sin, cos 함수의 값을 룩업테이블에 저장
-	double* tsin = new double[num_ang];
-	double* tcos = new double[num_ang];
-
-	for (i = 0; i < num_rho; i++) {
-		tsin[i] = (double)sin(i*PI/num_ang);
-		tcos[i] = (double)cos(i*PI/num_ang);
-	}
-
-	// 축적 배열(accumulate array) 생성
-	int** arr = new int*[num_rho];
-	for (i = 0; i < num_rho; i++) {
-		arr[i] = new int[num_ang];
-		memset(arr[i], 0, sizeof(int)*num_ang);
-	}
-
-	int m,n;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			if ((img->GetPixel(j,i)>>16) > 128) {
-				for (n = 0; n < num_ang; n++) {
-					m = (int) floor(i*tsin[n] + j*tcos[n] + 0.5);
-					m += (num_rho/2);
-
-					arr[m][n]++;
-				}
-			}
-		}
-	}
-
-	// 축적 배열에서 최대값 찾기
-	LineParam line;
-	line.rho = line.ang = 0;
-
-	int arr_max = 0;
-	for (m = 0; m < num_rho; m++) {
-		for (n = 0; n < num_ang; n++) {
-			if (arr[m][n] > arr_max) {
-				arr_max = arr[m][n];
-				line.rho = m - (num_rho/2);
-				line.ang = n*180.0/num_ang;
-			}
-		}
-	}
-
-	// 동적 할당 메모리 해제
-	delete [] tsin, tcos;
-	for (i = 0; i < num_rho; i++) {
-		delete [] arr[i];
-	}
-	delete arr;
-
-	return line;
-}
+//LineParam HoughLine(CImage* img)
+//{
+//	register int i, j;
+//
+//	int w = img->GetWidth();
+//	int h = img->GetHeight();
+//
+//	int num_rho = (int)(sqrt((double)w*w + h*h)*2);
+//	int num_ang = 360;
+//
+//	// 0~PI 각도에 해당하는 sin, cos 함수의 값을 룩업테이블에 저장
+//	double* tsin = new double[num_ang];
+//	double* tcos = new double[num_ang];
+//
+//	for (i = 0; i < num_rho; i++) {
+//		tsin[i] = (double)sin(i*PI/num_ang);
+//		tcos[i] = (double)cos(i*PI/num_ang);
+//	}
+//
+//	// 축적 배열(accumulate array) 생성
+//	int** arr = new int*[num_rho];
+//	for (i = 0; i < num_rho; i++) {
+//		arr[i] = new int[num_ang];
+//		memset(arr[i], 0, sizeof(int)*num_ang);
+//	}
+//
+//	int m,n;
+//	for (j = 0; j < h; j++) {
+//		for (i = 0; i < w; i++) {
+//			if ((img->GetPixel(j,i)>>16) > 128) {
+//				for (n = 0; n < num_ang; n++) {
+//					m = (int) floor(i*tsin[n] + j*tcos[n] + 0.5);
+//					m += (num_rho/2);
+//
+//					arr[m][n]++;
+//				}
+//			}
+//		}
+//	}
+//
+//	// 축적 배열에서 최대값 찾기
+//	LineParam line;
+//	line.rho = line.ang = 0;
+//
+//	int arr_max = 0;
+//	for (m = 0; m < num_rho; m++) {
+//		for (n = 0; n < num_ang; n++) {
+//			if (arr[m][n] > arr_max) {
+//				arr_max = arr[m][n];
+//				line.rho = m - (num_rho/2);
+//				line.ang = n*180.0/num_ang;
+//			}
+//		}
+//	}
+//
+//	// 동적 할당 메모리 해제
+//	delete [] tsin, tcos;
+//	for (i = 0; i < num_rho; i++) {
+//		delete [] arr[i];
+//	}
+//	delete arr;
+//
+//	return line;
+//}
 
 void DrawLine(CImage* img, CImage* obj, LineParam line, BYTE c)
 {

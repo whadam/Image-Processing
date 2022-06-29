@@ -1,7 +1,7 @@
 #pragma once
 #include <atlimage.h>
 
-#define MAX_CORNER 500
+#define MAX_CORNER 5000
 
 typedef struct _LineParam {
 	double rho;
@@ -29,16 +29,16 @@ typedef struct _CornerPoints {
 //
 //void FilterDiffusion(CImage*, float, float, int);
 //
-//void EdgeRoberts(CImage*);
-//void EdgePrewitt(CImage*);
-//void EdgeSobel(CImage*);
+void EdgeRoberts(CImage*);
+void EdgePrewitt(CImage*, CImage*);
+void EdgeSobel(CImage*);
 
-LineParam HoughLine(CImage*);
+//LineParam HoughLine(CImage*);
 
 void DrawLine(CImage*, CImage*, LineParam, BYTE);
 void DrawLine(CImage*, CImage*, int, int, int, int, BYTE);
 
-CornerPoints HarrisCorner(CImage*, double);
+//CornerPoints HarrisCorner(CImage*, double);
 
 template<typename T> 
 inline int limit(T pixel)

@@ -21,10 +21,13 @@
 #include "Fourier.h"
 #include "Freq_Space.h"
 #include "Harris.h"
+#include "Segment.h"
+#include "Binarize.h"
 
 #include <Windows.h>
 #include <math.h>
 #include <algorithm>
+#include <string.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -124,6 +127,9 @@ BEGIN_MESSAGE_MAP(CbmpLoad2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_COMBINE_HSI, &CbmpLoad2Dlg::OnBnClickedBtnCombineHsi)
 	ON_BN_CLICKED(IDC_BTN_COMBINE_YUV, &CbmpLoad2Dlg::OnBnClickedBtnCombineYuv)
 	ON_BN_CLICKED(IDC_BTN_COLOR_EDGE, &CbmpLoad2Dlg::OnBnClickedBtnColorEdge)
+	ON_BN_CLICKED(IDC_BTN_COLOR_HIST_EQ, &CbmpLoad2Dlg::OnBnClickedBtnColorHistEq)
+	ON_BN_CLICKED(IDC_BTN_BINARIZE, &CbmpLoad2Dlg::OnBnClickedBtnBinarize)
+	ON_BN_CLICKED(IDC_BTN_BINARIZATION_ITER, &CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter)
 END_MESSAGE_MAP()
 
 
@@ -233,8 +239,8 @@ void CbmpLoad2Dlg::OnBnClickedBtnImageopen()
 		image.Destroy();
 	}
 	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, NULL);
-	char path[64];
-	GetCurrentDirectory(64, path);
+	char path[128];
+	GetCurrentDirectory(128, path);
 	dlg.m_ofn.lpstrInitialDir = path;
 
 	CString filename;
@@ -243,9 +249,9 @@ void CbmpLoad2Dlg::OnBnClickedBtnImageopen()
 		filename = dlg.GetFileName();
 	}
 	else return;
-	
+
 	image.Load(CT2CA(filename));
-	
+
 	show(&image);
 }
 
@@ -363,50 +369,14 @@ void CbmpLoad2Dlg::OnBnClickedBntGamma()
 void CbmpLoad2Dlg::OnBnClickedBtnHisteq()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
-	float hist[256];
+	CImage obj;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	HistEqul(&image, &obj);
 
-	int count[256];
-	memset(count, 0, sizeof(int)*256);
-	for (j = 0; j < h; j++)
-	{
-		for (i = 0; i < w; i++)
-		{
-			count[(image.GetPixel(j,i) >> 16)]++;
-		}
-	}
-
-	float area = (float)w*h;
-	for (i = 0; i < 256; i++)
-	{
-		hist[i] = count[i] / area;
-	}
-
-	double cdf[256] = {0.0, };
-	cdf[0] = hist[0];
-	for (i = 1; i < 256; i++)
-	{
-		cdf[i] = cdf[i-1] + hist[i];
-	}
-
-	int value = 0;
-
-	for (j = 0; j < h; j++)
-	{
-		for (i = 0; i < w; i++)
-		{
-			value = cdf[(image.GetPixel(j,i) >> 16)] * 255;
-			if (value > 255) value = 255;
-			else if (value < 0) value = 0;
-			value += (value << 16) + (value << 8);
-			image.SetPixel(j, i, value);
-		}
-	}
-
-	show(&image);
+	img = new Image;
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Histogram Equlize");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnPlus()
@@ -1513,28 +1483,9 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeRobert()
 void CbmpLoad2Dlg::OnBnClickedBtnEdgePrewitt()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
 	CImage obj;
-	obj.Create(w,h,24);
 
-	int h1, h2;
-	double hval;
-	for (j = 1; j < h-1; j++) {
-		for (i = 1; i < w-1; i++) {
-			h1 = (image.GetPixel(j+1,i-1)>>16) + (image.GetPixel(j+1,i)>>16) + (image.GetPixel(j+1,i+1)>>16)
-				- (image.GetPixel(j-1,i-1)>>16) - (image.GetPixel(j-1,i)>>16) - (image.GetPixel(j-1,i+1)>>16);
-			h2 = (image.GetPixel(j-1,i+1)>>16) + (image.GetPixel(j,i+1)>>16) + (image.GetPixel(j+1,i+1)>>16)
-				- (image.GetPixel(j-1,i-1)>>16) - (image.GetPixel(j,i-1)>>16) - (image.GetPixel(j+1,i-1)>>16);
-
-			hval = sqrt((double)h1*h1 + h2*h2);
-
-			obj.SetPixel(j,i,limit((int)hval));
-		}
-	}
+	EdgePrewitt(&image, &obj);
 
 	img = new Image;
 	img->Create(IDD_IMAGE);
@@ -1948,7 +1899,7 @@ void CbmpLoad2Dlg::RGB_TO_HSI(double R, double G, double B, double& H, double& S
 
 		S = 1 - (min_rgb / I);
 		temp = ((R-G)+(R-B)) / (2*sqrt((R-G)*(R-G) + (R-B)*(G-B)));
-		
+
 		H = acos(temp)*180 / PI;
 
 		if (B > G) H = 360 - H;
@@ -2029,7 +1980,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnSplitRgb()
 	int h = image.GetHeight();
 
 	unsigned char r, g, b;
-	
+
 	InitImages();
 	img1.Create(w,h,24);
 	img2.Create(w,h,24);
@@ -2068,7 +2019,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnSplitHsi()
 	int h = image.GetHeight();
 
 	double r, g, b, hh, ss, ii;
-	
+
 	InitImages();
 	img1.Create(w,h,24);
 	img2.Create(w,h,24);
@@ -2115,7 +2066,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnSplitYuv()
 
 	BYTE r, g, b, y, u, v;
 	int pixel;
-	
+
 	for (j = 0; j < h; j++) {
 		for (i = 0; i < w; i++) {
 			pixel = image.GetPixel(j,i);
@@ -2144,7 +2095,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineRgb()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
-	
+
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -2189,7 +2140,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineHsi()
 	int h = image.GetHeight();
 
 	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
-	
+
 	CImage obj;
 	obj.Create(w,h,24);
 
@@ -2231,7 +2182,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineYuv()
 	int h = image.GetHeight();
 
 	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
-	
+
 	CImage obj;
 	obj.Create(w,h,24);
 
@@ -2256,18 +2207,91 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineYuv()
 	img = new Image;
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
-	img->show(&obj, "Combine HSI");
+	img->show(&obj, "Combine YUV");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnColorEdge()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	register int i, j;
+
+	int w = image.GetWidth();
+	int h = image.GetHeight();
+
 	OnBnClickedBtnSplitYuv();
-	// filter 클래스 만들어서 관리해야할듯
-	// img1,2,3를 prewitt해야함
+	CImage obj1, obj2, obj3;
+	EdgePrewitt(&img1, &obj1);
+	EdgePrewitt(&img2, &obj2);
+	EdgePrewitt(&img3, &obj3);
+	InitImages();
+
+	CImage obj;
+	obj.Create(w,h,24);
+
+	int tmp;
+	for (j = 0; j < h; j++) {
+		for (i = 0; i < w; i++) {
+			tmp = CalcDist(obj1.GetPixel(j,i)>>16, obj2.GetPixel(j,i)>>16, obj3.GetPixel(j,i)>>16);
+			obj.SetPixel(j,i,limit(tmp));
+		}
+	}
+
+	img = new Image;
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Color Edge");
 }
 
 double CbmpLoad2Dlg::CalcDist(double x, double y, double z)
 {
 	return sqrt(x*x + y*y + z*z);
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnColorHistEq()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	OnBnClickedBtnSplitYuv();
+
+	CImage obj;
+	HistEqul(&img1, &obj);
+	copy(&obj, &img1);
+	OnBnClickedBtnCombineYuv();
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnBinarize()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	Binarize bi;
+
+	if (bi.DoModal() == IDOK) {
+		CImage obj;
+
+		Binarization(&image, &obj, bi.m_edit_threshold);
+
+		img = new Image;
+		img->Create(IDD_IMAGE);
+		img->ShowWindow(SW_SHOW);
+		img->show(&obj, "Binarization");
+	}
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	Binarize bi;
+
+	int th = BinarizationIterative(&image);
+	CImage obj;
+
+	char str[32] = "Binarization\nTreshold: ";
+	char tmp[4];
+	sprintf_s(tmp,"%d", th);
+	std::strcat(str,tmp);
+
+	Binarization(&image, &obj, th);
+
+	img = new Image;
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, str);
 }
