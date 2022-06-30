@@ -47,8 +47,8 @@ protected:
 public:
 	CStatic m_picture_control;
 	CImage image, img1, img2, img3, obj;
-	Image* img;
-	Image** arr;
+	Image* dlg;
+	Image** dlgs;
 
 	void show(CImage* img);
 
@@ -128,18 +128,6 @@ public:
 	afx_msg void OnBnClickedBtnMorphGrayOpening();
 	afx_msg void OnBnClickedBtnMorphGrayClosing();
 };
-
-//template<typename T> 
-//inline int limit(T pixel)
-//{
-//	if (pixel > 255) {
-//		return (255 << 16) + (255 << 8) + 255;
-//	}
-//	else if (pixel < 0) return 0;
-//	else {
-//		return (pixel<<16) + (pixel<<8) + pixel;
-//	}
-//}
 
 template<typename T>
 inline T limit(const T& value, const T& lower, const T& upper)

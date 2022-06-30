@@ -40,6 +40,7 @@ END_MESSAGE_MAP()
 
 void Image::show(CImage* image, char* name)
 {
+	
 	tmp = image;
 	m_name = name;
 	UpdateData(FALSE);
