@@ -7,7 +7,6 @@
 #include "bmpLoad2Dlg.h"
 #include "afxdialogex.h"
 
-
 // Image 대화 상자입니다.
 
 IMPLEMENT_DYNAMIC(Image, CDialog)
@@ -16,7 +15,7 @@ Image::Image(CWnd* pParent /*=NULL*/)
 	: CDialog(Image::IDD, pParent)
 	, m_name(_T(""))
 {
-
+	parent = (CbmpLoad2Dlg*)pParent;
 }
 
 Image::~Image()
@@ -32,6 +31,8 @@ void Image::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(Image, CDialog)
 	ON_BN_CLICKED(IDOK, &Image::OnBnClickedOk)
+	ON_WM_SYSCOMMAND()
+	ON_BN_CLICKED(IDC_BTN_APPLY, &Image::OnBnClickedBtnApply)
 END_MESSAGE_MAP()
 
 
@@ -39,6 +40,7 @@ END_MESSAGE_MAP()
 
 void Image::show(CImage* image, char* name)
 {
+	tmp = image;
 	m_name = name;
 	UpdateData(FALSE);
 	CDC* dc;
@@ -50,5 +52,24 @@ void Image::show(CImage* image, char* name)
 void Image::OnBnClickedOk()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	tmp->Destroy();
 	CDialog::OnOK();
+}
+
+void Image::OnSysCommand(UINT nID, LPARAM lParam)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	if (nID == SC_CLOSE) { // X버튼으로 종료 시
+		tmp->Destroy();
+	}
+	CDialog::OnSysCommand(nID, lParam);
+}
+
+
+void Image::OnBnClickedBtnApply()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	copy(tmp, &parent->image);
+	parent->show(&parent->image);
+	OnBnClickedOk();
 }

@@ -1,9 +1,9 @@
 #pragma once
 #include "afxwin.h"
 
-
 // Image 대화 상자입니다.
 
+class CbmpLoad2Dlg;
 class Image : public CDialog
 {
 	DECLARE_DYNAMIC(Image)
@@ -21,10 +21,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CStatic m_image_control;
+	CImage* tmp;
+	CbmpLoad2Dlg* parent;
 
 	void show(CImage* image, char*);
 	afx_msg void OnBnClickedOk();
 	CString m_name;
+	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnBnClickedBtnApply();
 };
 
@@ -35,7 +38,7 @@ inline void copy(T* src, T* dst)
 	int w = src->GetWidth();
 	int h = src->GetHeight();
 
-	dst->Destroy();
+	if (!dst->IsNull()) dst->Destroy();
 	dst->Create(w,h,24);
 
 	for (i = 0; i < w; i++) {

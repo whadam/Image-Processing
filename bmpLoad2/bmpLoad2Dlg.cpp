@@ -130,6 +130,16 @@ BEGIN_MESSAGE_MAP(CbmpLoad2Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_COLOR_HIST_EQ, &CbmpLoad2Dlg::OnBnClickedBtnColorHistEq)
 	ON_BN_CLICKED(IDC_BTN_BINARIZE, &CbmpLoad2Dlg::OnBnClickedBtnBinarize)
 	ON_BN_CLICKED(IDC_BTN_BINARIZATION_ITER, &CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter)
+	ON_BN_CLICKED(IDC_BTN_LABELING, &CbmpLoad2Dlg::OnBnClickedBtnLabeling)
+	ON_BN_CLICKED(IDC_BTN_CONTOUR_TRACING, &CbmpLoad2Dlg::OnBnClickedBtnContourTracing)
+	ON_BN_CLICKED(IDC_BTN_MORPH_EROSION, &CbmpLoad2Dlg::OnBnClickedBtnMorphErosion)
+	ON_BN_CLICKED(IDC_BTN_MORPH_DILATION, &CbmpLoad2Dlg::OnBnClickedBtnMorphDilation)
+	ON_BN_CLICKED(IDC_BTN_MORPH_OPENING, &CbmpLoad2Dlg::OnBnClickedBtnMorphOpening)
+	ON_BN_CLICKED(IDC_BTN_MORPH_CLOSING, &CbmpLoad2Dlg::OnBnClickedBtnMorphClosing)
+	ON_BN_CLICKED(IDC_BTN_MORPH_GRAY_EROSION, &CbmpLoad2Dlg::OnBnClickedBtnMorphGrayErosion)
+	ON_BN_CLICKED(IDC_BTN_MORPH_GRAY_DILATION, &CbmpLoad2Dlg::OnBnClickedBtnMorphGrayDilation)
+	ON_BN_CLICKED(IDC_BTN_MORPH_GRAY_OPENING, &CbmpLoad2Dlg::OnBnClickedBtnMorphGrayOpening)
+	ON_BN_CLICKED(IDC_BTN_MORPH_GRAY_CLOSING, &CbmpLoad2Dlg::OnBnClickedBtnMorphGrayClosing)
 END_MESSAGE_MAP()
 
 
@@ -166,10 +176,6 @@ BOOL CbmpLoad2Dlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	arr = new Image*[3];
-	for (int i = 0; i < 3; i++) {
-		arr[i] = new Image;
-		arr[i]->Create(IDD_IMAGE);
-	}
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -369,11 +375,9 @@ void CbmpLoad2Dlg::OnBnClickedBntGamma()
 void CbmpLoad2Dlg::OnBnClickedBtnHisteq()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CImage obj;
-
 	HistEqul(&image, &obj);
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Histogram Equlize");
@@ -892,7 +896,6 @@ void CbmpLoad2Dlg::Nearest(int w, int h, int nw, int nh)
 {
 	register int i, j;
 
-	CImage obj;
 	obj.Create(nw,nh,24);
 
 	int x,y;
@@ -915,7 +918,6 @@ void CbmpLoad2Dlg::Bilinear(int w, int h, int nw, int nh)
 {
 	register int i, j;
 
-	CImage obj;
 	obj.Create(nw,nh,24);
 
 	int x1, x2, y1, y2;
@@ -955,7 +957,6 @@ void CbmpLoad2Dlg::CubicConvolution(int w, int h, int nw, int nh)
 {
 	register int i, j;
 
-	CImage obj;
 	obj.Create(nw,nh,24);
 
 	int x1, x2, x3, x4, y1, y2, y3, y4;
@@ -1235,20 +1236,20 @@ void CbmpLoad2Dlg::OnBnClickedBtnDft()
 	cpy.Create(w,h,24);
 
 	fourier.GetSpectrumImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "Spectrum");
 
 	fourier.GetphaseImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "Phase");
 
 	fourier.DFT(-1);
 	fourier.GetImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "IDFT");
@@ -1268,20 +1269,20 @@ void CbmpLoad2Dlg::OnBnClickedBtnDftrc()
 	cpy.Create(w,h,24);
 
 	fourier.GetSpectrumImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "Spectrum");
 
 	fourier.GetphaseImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "Phase");
 
 	fourier.DFTRC(-1);
 	fourier.GetImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "IDFTRC");
@@ -1303,20 +1304,20 @@ void CbmpLoad2Dlg::OnBnClickedBtnFft()
 	cpy.Create(w,h,24);
 
 	fourier.GetSpectrumImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "Spectrum");
 
 	fourier.GetphaseImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "Phase");
 
 	fourier.FFT(-1);
 	fourier.GetImage(&cpy);
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&cpy, "IFFT");
@@ -1343,11 +1344,10 @@ void CbmpLoad2Dlg::OnBnClickedBtnIdealLowpass()
 		fourier.IdealLowpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		CImage obj;
 		obj.Create(w,h,24);
 
 		fourier.GetImage(&obj);
-		img = new Image;
+		img = new Image(this);
 		img->Create(IDD_IMAGE);
 		img->ShowWindow(SW_SHOW);
 		img->show(&obj, "Ideal Lowpass Filtering");
@@ -1375,11 +1375,10 @@ void CbmpLoad2Dlg::OnBnClickedBtnIdealHighpass()
 		fourier.IdealHighpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		CImage obj;
 		obj.Create(w,h,24);
 
 		fourier.GetImage(&obj);
-		img = new Image;
+		img = new Image(this);
 		img->Create(IDD_IMAGE);
 		img->ShowWindow(SW_SHOW);
 		img->show(&obj, "Ideal Highpass Filtering");
@@ -1407,11 +1406,10 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianLowpass()
 		fourier.GaussianLowpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		CImage obj;
 		obj.Create(w,h,24);
 
 		fourier.GetImage(&obj);
-		img = new Image;
+		img = new Image(this);
 		img->Create(IDD_IMAGE);
 		img->ShowWindow(SW_SHOW);
 		img->show(&obj, "Gaussian Lowpass Filtering");
@@ -1439,11 +1437,10 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianHighpass()
 		fourier.GaussianHighpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		CImage obj;
 		obj.Create(w,h,24);
 
 		fourier.GetImage(&obj);
-		img = new Image;
+		img = new Image(this);
 		img->Create(IDD_IMAGE);
 		img->ShowWindow(SW_SHOW);
 		img->show(&obj, "Gaussian Highpass Filtering");
@@ -1458,7 +1455,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeRobert()
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
-	CImage obj;
 	obj.Create(w,h,24);
 
 	int h1, h2;
@@ -1474,7 +1470,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeRobert()
 		}
 	}
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Edge Robert");
@@ -1483,11 +1479,9 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeRobert()
 void CbmpLoad2Dlg::OnBnClickedBtnEdgePrewitt()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CImage obj;
-
 	EdgePrewitt(&image, &obj);
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Edge Prewitt");
@@ -1501,7 +1495,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeSobel()
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
-	CImage obj;
 	obj.Create(w,h,24);
 
 	int h1, h2;
@@ -1519,7 +1512,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeSobel()
 		}
 	}
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Edge Sobel");
@@ -1534,13 +1527,12 @@ void CbmpLoad2Dlg::OnBnClickedBtnHough()
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
-	CImage obj;
 	obj.Create(w, h, 24);
 
 	LineParam line = HoughLine();
 	DrawLine(&obj, line, 255);
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Hough");
@@ -1701,7 +1693,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnHarris()
 		CornerPoints cp;
 		cp = HarrisCorner(th);
 
-		CImage obj;
 		obj.Create(image.GetWidth(), image.GetHeight(), 24);
 		copy(&image, &obj);
 
@@ -1721,7 +1712,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnHarris()
 			obj.SetPixel(y+1,x+1,0);
 		}
 
-		img = new Image;
+		img = new Image(this);
 		img->Create(IDD_IMAGE);
 		img->ShowWindow(SW_SHOW);
 		img->show(&obj, "Harris Corner Points");
@@ -1870,6 +1861,8 @@ void CbmpLoad2Dlg::OnBnClickedBtnGrayscale()
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
+	obj.Create(w,h,24);
+
 	BYTE r, g ,b;
 	for (j = 0; j < h; j++) {
 		for (i = 0; i < w; i++) {
@@ -1877,11 +1870,14 @@ void CbmpLoad2Dlg::OnBnClickedBtnGrayscale()
 			g = image.GetPixel(j,i) >> 8;
 			b = image.GetPixel(j,i) >> 16;
 
-			image.SetPixel(j,i,limit(RGB2GRAY(r,g,b)));
+			obj.SetPixel(j,i,limit(RGB2GRAY(r,g,b)));
 		}
 	}
 
-	show(&image);
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Grayscale");
 }
 
 void CbmpLoad2Dlg::RGB_TO_HSI(double R, double G, double B, double& H, double& S, double& I)
@@ -2000,12 +1996,18 @@ void CbmpLoad2Dlg::OnBnClickedBtnSplitRgb()
 		}
 	}
 
+	arr[0] = new Image(this);
+	arr[0]->Create(IDD_IMAGE);
 	arr[0]->ShowWindow(SW_SHOW);
 	arr[0]->show(&img1, "Red");
 
+	arr[1] = new Image(this);
+	arr[1]->Create(IDD_IMAGE);
 	arr[1]->ShowWindow(SW_SHOW);
 	arr[1]->show(&img2, "Green");
 
+	arr[2] = new Image(this);
+	arr[2]->Create(IDD_IMAGE);
 	arr[2]->ShowWindow(SW_SHOW);
 	arr[2]->show(&img3, "Blue");
 }
@@ -2103,7 +2105,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineRgb()
 
 	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
 
-	CImage obj;
 	obj.Create(w,h,24);
 
 	BYTE r,g,b;
@@ -2123,7 +2124,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineRgb()
 	arr[1]->ShowWindow(SW_HIDE);
 	arr[2]->ShowWindow(SW_HIDE);
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Combine RGB");
@@ -2141,7 +2142,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineHsi()
 
 	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
 
-	CImage obj;
 	obj.Create(w,h,24);
 
 	double r,g,b,hh,ss,ii;
@@ -2165,7 +2165,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineHsi()
 	arr[1]->ShowWindow(SW_HIDE);
 	arr[2]->ShowWindow(SW_HIDE);
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Combine HSI");
@@ -2183,7 +2183,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineYuv()
 
 	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
 
-	CImage obj;
 	obj.Create(w,h,24);
 
 	BYTE y,u,v,r,g,b;
@@ -2204,7 +2203,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineYuv()
 	arr[1]->ShowWindow(SW_HIDE);
 	arr[2]->ShowWindow(SW_HIDE);
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Combine YUV");
@@ -2225,7 +2224,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnColorEdge()
 	EdgePrewitt(&img3, &obj3);
 	InitImages();
 
-	CImage obj;
 	obj.Create(w,h,24);
 
 	int tmp;
@@ -2236,7 +2234,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnColorEdge()
 		}
 	}
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, "Color Edge");
@@ -2252,7 +2250,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnColorHistEq()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	OnBnClickedBtnSplitYuv();
 
-	CImage obj;
 	HistEqul(&img1, &obj);
 	copy(&obj, &img1);
 	OnBnClickedBtnCombineYuv();
@@ -2264,11 +2261,9 @@ void CbmpLoad2Dlg::OnBnClickedBtnBinarize()
 	Binarize bi;
 
 	if (bi.DoModal() == IDOK) {
-		CImage obj;
-
 		Binarization(&image, &obj, bi.m_edit_threshold);
 
-		img = new Image;
+		img = new Image(this);
 		img->Create(IDD_IMAGE);
 		img->ShowWindow(SW_SHOW);
 		img->show(&obj, "Binarization");
@@ -2281,7 +2276,6 @@ void CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter()
 	Binarize bi;
 
 	int th = BinarizationIterative(&image);
-	CImage obj;
 
 	char str[32] = "Binarization\nTreshold: ";
 	char tmp[4];
@@ -2290,8 +2284,153 @@ void CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter()
 
 	Binarization(&image, &obj, th);
 
-	img = new Image;
+	img = new Image(this);
 	img->Create(IDD_IMAGE);
 	img->ShowWindow(SW_SHOW);
 	img->show(&obj, str);
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnLabeling()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	int nLabel = Labeling(&image, &obj);
+
+	char str[32] = "레이블 개수 = ";
+	char tmp[6];
+	sprintf_s(tmp,"%d", nLabel);
+	std::strcat(str,tmp);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, str);
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnContourTracing()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	ContourPoints cp = ContourTracing(&image, &obj);
+
+	register int i;
+
+	int w = image.GetWidth();
+	int h = image.GetHeight();
+
+	obj.Create(w,h,24);
+	for (i = 0; i < cp.num; i++) {
+		obj.SetPixelRGB(cp.y[i], cp.x[i], 255,255,255);
+	}
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Contour Tracing");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphErosion()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	copy(&image, &obj);
+	MorphologyErosion(&image, &obj);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Erosion");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphDilation()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	copy(&image, &obj);
+	MorphologyDilation(&image, &obj);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Dilation");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphOpening()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	copy(&image, &obj);
+	MorphologyErosion(&image, &obj);
+	CImage tmp;
+	copy(&obj, &tmp);
+	MorphologyDilation(&tmp, &obj);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Opening");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphClosing()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	copy(&image, &obj);
+	MorphologyDilation(&image, &obj);
+	CImage tmp;
+	copy(&obj, &tmp);
+	MorphologyErosion(&tmp, &obj);
+	
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Closing");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayErosion()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	obj.Create(image.GetWidth(), image.GetHeight(), 24);
+	MorphologyGrayErosion(&image, &obj);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Gray Erosion");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayDilation()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	obj.Create(image.GetWidth(), image.GetHeight(), 24);
+	MorphologyGrayDilation(&image, &obj);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Gray Dilation");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayOpening()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	obj.Create(image.GetWidth(), image.GetHeight(), 24);
+	MorphologyGrayErosion(&image, &obj);
+	CImage tmp;
+	copy(&obj, &tmp);
+	MorphologyGrayDilation(&tmp, &obj);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Gray Opening");
+}
+
+void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayClosing()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	obj.Create(image.GetWidth(), image.GetHeight(), 24);
+	MorphologyGrayDilation(&image, &obj);
+	CImage tmp;
+	copy(&obj, &tmp);
+	MorphologyGrayErosion(&tmp, &obj);
+
+	img = new Image(this);
+	img->Create(IDD_IMAGE);
+	img->ShowWindow(SW_SHOW);
+	img->show(&obj, "Morphology Gray Closing");
 }

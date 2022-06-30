@@ -46,7 +46,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CStatic m_picture_control;
-	CImage image, img1, img2, img3;
+	CImage image, img1, img2, img3, obj;
 	Image* img;
 	Image** arr;
 
@@ -117,6 +117,16 @@ public:
 	afx_msg void OnBnClickedBtnColorHistEq();
 	afx_msg void OnBnClickedBtnBinarize();
 	afx_msg void OnBnClickedBtnBinarizationIter();
+	afx_msg void OnBnClickedBtnLabeling();
+	afx_msg void OnBnClickedBtnContourTracing();
+	afx_msg void OnBnClickedBtnMorphErosion();
+	afx_msg void OnBnClickedBtnMorphDilation();
+	afx_msg void OnBnClickedBtnMorphOpening();
+	afx_msg void OnBnClickedBtnMorphClosing();
+	afx_msg void OnBnClickedBtnMorphGrayErosion();
+	afx_msg void OnBnClickedBtnMorphGrayDilation();
+	afx_msg void OnBnClickedBtnMorphGrayOpening();
+	afx_msg void OnBnClickedBtnMorphGrayClosing();
 };
 
 //template<typename T> 
