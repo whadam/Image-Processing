@@ -1,5 +1,5 @@
-// Binarize.cpp : ±¸Çö ÆÄÀÏÀÔ´Ï´Ù.
-//
+// Binarize.cpp : ?´Ñ‹ì½ ???”ª??…ë•²??
+// ?œê? ?ŒìŠ¤??
 
 #include "stdafx.h"
 #include "bmpLoad2.h"
@@ -7,7 +7,7 @@
 #include "afxdialogex.h"
 
 
-// Binarize ´ëÈ­ »óÀÚÀÔ´Ï´Ù.
+// Binarize ?????ê³¸ì˜„??…ë•²??
 
 IMPLEMENT_DYNAMIC(Binarize, CDialog)
 
@@ -37,7 +37,7 @@ BEGIN_MESSAGE_MAP(Binarize, CDialog)
 END_MESSAGE_MAP()
 
 
-// Binarize ¸Þ½ÃÁö Ã³¸®±âÀÔ´Ï´Ù.
+// Binarize ï§Žë¶¿?†ï§ž? ï§£ì„Ž?æ¹²ê³—ì—¯??ˆë–Ž.
 BOOL Binarize::OnInitDialog()
 {
 	CDialog::OnInitDialog();
@@ -52,12 +52,12 @@ BOOL Binarize::OnInitDialog()
 
 void Binarize::OnEnChangeEditThreshold()
 {
-	// TODO:  RICHEDIT ÄÁÆ®·ÑÀÎ °æ¿ì, ÀÌ ÄÁÆ®·ÑÀº
-	// CDialog::OnInitDialog() ÇÔ¼ö¸¦ ÀçÁöÁ¤ 
-	//ÇÏ°í ¸¶½ºÅ©¿¡ OR ¿¬»êÇÏ¿© ¼³Á¤µÈ ENM_CHANGE ÇÃ·¡±×¸¦ ÁöÁ¤ÇÏ¿© CRichEditCtrl().SetEventMask()¸¦ È£ÃâÇÏÁö ¾ÊÀ¸¸é
-	// ÀÌ ¾Ë¸² ¸Þ½ÃÁö¸¦ º¸³»Áö ¾Ê½À´Ï´Ù.
+	// TODO:  RICHEDIT ?Œâ‘¦?ƒæ¿¡?¼ì”¤ å¯ƒìŽŒ?? ???Œâ‘¦?ƒæ¿¡??
+	// CDialog::OnInitDialog() ??¥ë‹”???????
+	//??í€?ï§ë‰???ë¿?OR ?ê³—ê¶›??ë¿¬ ??¼ì ™??ENM_CHANGE ???˜’æ´¹ëªƒ? ï§žÂ€?ëº¥ë¸¯??CRichEditCtrl().SetEventMask()???ëª„í…§??? ??†ì‘ï§?
+	// ?????” ï§Žë¶¿?†ï§ž???è¹‚ë?ê¶¡ï§ž? ??†ë’¿??ˆë–Ž.
 
-	// TODO:  ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO:  ??ë¦???Œâ‘¦?ƒæ¿¡????” ï§£ì„Ž?æ¹²??„ë¶¾ë±¶ç‘œ??°ë¶½???¸ë•²??
 	UpdateData(TRUE);
 	m_slider_control.SetPos(m_edit_threshold);
 }
@@ -65,7 +65,7 @@ void Binarize::OnEnChangeEditThreshold()
 
 void Binarize::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 {
-	// TODO: ¿©±â¿¡ ¸Þ½ÃÁö Ã³¸®±â ÄÚµå¸¦ Ãß°¡ ¹×/¶Ç´Â ±âº»°ªÀ» È£ÃâÇÕ´Ï´Ù.
+	// TODO: ??ë¦??ï§Žë¶¿?†ï§ž? ï§£ì„Ž?æ¹²??„ë¶¾ë±¶ç‘œ??°ë¶½? è«??ë¨?’— æ¹²ê³•??ª›ë¯ªì“£ ?ëª„í…§??¸ë•²??
 	if (m_slider_control.GetSafeHwnd() == pScrollBar->GetSafeHwnd())
 	{
 		int nPos = m_slider_control.GetPos();

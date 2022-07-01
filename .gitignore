@@ -1,0 +1,11 @@
+.bmp
+.sdf
+.sln
+.exe
+.ilk
+.pdb
+
+Debug/
+ipch/
+bmpLoad2/Debug/
+bmpLoad2/res/

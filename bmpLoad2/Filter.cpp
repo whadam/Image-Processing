@@ -13,7 +13,7 @@ void Mean(CImage* img)
 
 void WeightedMean(CImage* img)
 {
-
+	
 }
 
 void Guassian(CImage* img, double sigma)

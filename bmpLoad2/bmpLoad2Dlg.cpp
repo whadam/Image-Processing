@@ -1,5 +1,5 @@
 
-// bmpLoad2Dlg.cpp : ±¸Çö ÆÄÀÏ
+// bmpLoad2Dlg.cpp : êµ¬í˜„ íŒŒì¼
 
 #include "stdafx.h"
 #include "bmpLoad2.h"
@@ -36,20 +36,20 @@
 const double PI = acos(-1.0);
 
 
-// ÀÀ¿ë ÇÁ·Î±×·¥ Á¤º¸¿¡ »ç¿ëµÇ´Â CAboutDlg ´ëÈ­ »óÀÚÀÔ´Ï´Ù.
+// ì‘ìš© í”„ë¡œê·¸ë¨ ì •ë³´ì— ì‚¬ìš©ë˜ëŠ” CAboutDlg ëŒ€í™” ìƒìì…ë‹ˆë‹¤.
 
 class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
 
-	// ´ëÈ­ »óÀÚ µ¥ÀÌÅÍÀÔ´Ï´Ù.
+	// ëŒ€í™” ìƒì ë°ì´í„°ì…ë‹ˆë‹¤.
 	enum { IDD = IDD_ABOUTBOX };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV Áö¿øÀÔ´Ï´Ù.
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV ì§€ì›ì…ë‹ˆë‹¤.
 
-	// ±¸ÇöÀÔ´Ï´Ù.
+	// êµ¬í˜„ì…ë‹ˆë‹¤.
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -66,7 +66,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
-// CbmpLoad2Dlg ´ëÈ­ »óÀÚ
+// CbmpLoad2Dlg ëŒ€í™” ìƒì
 
 CbmpLoad2Dlg::CbmpLoad2Dlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CbmpLoad2Dlg::IDD, pParent)
@@ -143,15 +143,15 @@ BEGIN_MESSAGE_MAP(CbmpLoad2Dlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
-// CbmpLoad2Dlg ¸Ş½ÃÁö Ã³¸®±â
+// CbmpLoad2Dlg ë©”ì‹œì§€ ì²˜ë¦¬ê¸°
 
 BOOL CbmpLoad2Dlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// ½Ã½ºÅÛ ¸Ş´º¿¡ "Á¤º¸..." ¸Ş´º Ç×¸ñÀ» Ãß°¡ÇÕ´Ï´Ù.
+	// ì‹œìŠ¤í…œ ë©”ë‰´ì— "ì •ë³´..." ë©”ë‰´ í•­ëª©ì„ ì¶”ê°€í•©ë‹ˆë‹¤.
 
-	// IDM_ABOUTBOX´Â ½Ã½ºÅÛ ¸í·É ¹üÀ§¿¡ ÀÖ¾î¾ß ÇÕ´Ï´Ù.
+	// IDM_ABOUTBOXëŠ” ì‹œìŠ¤í…œ ëª…ë ¹ ë²”ìœ„ì— ìˆì–´ì•¼ í•©ë‹ˆë‹¤.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
@@ -169,15 +169,15 @@ BOOL CbmpLoad2Dlg::OnInitDialog()
 		}
 	}
 
-	// ÀÌ ´ëÈ­ »óÀÚÀÇ ¾ÆÀÌÄÜÀ» ¼³Á¤ÇÕ´Ï´Ù. ÀÀ¿ë ÇÁ·Î±×·¥ÀÇ ÁÖ Ã¢ÀÌ ´ëÈ­ »óÀÚ°¡ ¾Æ´Ò °æ¿ì¿¡´Â
-	//  ÇÁ·¹ÀÓ¿öÅ©°¡ ÀÌ ÀÛ¾÷À» ÀÚµ¿À¸·Î ¼öÇàÇÕ´Ï´Ù.
-	SetIcon(m_hIcon, TRUE);			// Å« ¾ÆÀÌÄÜÀ» ¼³Á¤ÇÕ´Ï´Ù.
-	SetIcon(m_hIcon, FALSE);		// ÀÛÀº ¾ÆÀÌÄÜÀ» ¼³Á¤ÇÕ´Ï´Ù.
+	// ì´ ëŒ€í™” ìƒìì˜ ì•„ì´ì½˜ì„ ì„¤ì •í•©ë‹ˆë‹¤. ì‘ìš© í”„ë¡œê·¸ë¨ì˜ ì£¼ ì°½ì´ ëŒ€í™” ìƒìê°€ ì•„ë‹ ê²½ìš°ì—ëŠ”
+	//  í”„ë ˆì„ì›Œí¬ê°€ ì´ ì‘ì—…ì„ ìë™ìœ¼ë¡œ ìˆ˜í–‰í•©ë‹ˆë‹¤.
+	SetIcon(m_hIcon, TRUE);			// í° ì•„ì´ì½˜ì„ ì„¤ì •í•©ë‹ˆë‹¤.
+	SetIcon(m_hIcon, FALSE);		// ì‘ì€ ì•„ì´ì½˜ì„ ì„¤ì •í•©ë‹ˆë‹¤.
 
-	// TODO: ¿©±â¿¡ Ãß°¡ ÃÊ±âÈ­ ÀÛ¾÷À» Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì¶”ê°€ ì´ˆê¸°í™” ì‘ì—…ì„ ì¶”ê°€í•©ë‹ˆë‹¤.
 	dlgs = new Image*[3];
 
-	return TRUE;  // Æ÷Ä¿½º¸¦ ÄÁÆ®·Ñ¿¡ ¼³Á¤ÇÏÁö ¾ÊÀ¸¸é TRUE¸¦ ¹İÈ¯ÇÕ´Ï´Ù.
+	return TRUE;  // í¬ì»¤ìŠ¤ë¥¼ ì»¨íŠ¸ë¡¤ì— ì„¤ì •í•˜ì§€ ì•Šìœ¼ë©´ TRUEë¥¼ ë°˜í™˜í•©ë‹ˆë‹¤.
 }
 
 void CbmpLoad2Dlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -193,19 +193,19 @@ void CbmpLoad2Dlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// ´ëÈ­ »óÀÚ¿¡ ÃÖ¼ÒÈ­ ´ÜÃß¸¦ Ãß°¡ÇÒ °æ¿ì ¾ÆÀÌÄÜÀ» ±×¸®·Á¸é
-//  ¾Æ·¡ ÄÚµå°¡ ÇÊ¿äÇÕ´Ï´Ù. ¹®¼­/ºä ¸ğµ¨À» »ç¿ëÇÏ´Â MFC ÀÀ¿ë ÇÁ·Î±×·¥ÀÇ °æ¿ì¿¡´Â
-//  ÇÁ·¹ÀÓ¿öÅ©¿¡¼­ ÀÌ ÀÛ¾÷À» ÀÚµ¿À¸·Î ¼öÇàÇÕ´Ï´Ù.
+// ëŒ€í™” ìƒìì— ìµœì†Œí™” ë‹¨ì¶”ë¥¼ ì¶”ê°€í•  ê²½ìš° ì•„ì´ì½˜ì„ ê·¸ë¦¬ë ¤ë©´
+//  ì•„ë˜ ì½”ë“œê°€ í•„ìš”í•©ë‹ˆë‹¤. ë¬¸ì„œ/ë·° ëª¨ë¸ì„ ì‚¬ìš©í•˜ëŠ” MFC ì‘ìš© í”„ë¡œê·¸ë¨ì˜ ê²½ìš°ì—ëŠ”
+//  í”„ë ˆì„ì›Œí¬ì—ì„œ ì´ ì‘ì—…ì„ ìë™ìœ¼ë¡œ ìˆ˜í–‰í•©ë‹ˆë‹¤.
 
 void CbmpLoad2Dlg::OnPaint()
 {
 	if (IsIconic())
 	{
-		CPaintDC dc(this); // ±×¸®±â¸¦ À§ÇÑ µğ¹ÙÀÌ½º ÄÁÅØ½ºÆ®ÀÔ´Ï´Ù.
+		CPaintDC dc(this); // ê·¸ë¦¬ê¸°ë¥¼ ìœ„í•œ ë””ë°”ì´ìŠ¤ ì»¨í…ìŠ¤íŠ¸ì…ë‹ˆë‹¤.
 
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// Å¬¶óÀÌ¾ğÆ® »ç°¢Çü¿¡¼­ ¾ÆÀÌÄÜÀ» °¡¿îµ¥¿¡ ¸ÂÃä´Ï´Ù.
+		// í´ë¼ì´ì–¸íŠ¸ ì‚¬ê°í˜•ì—ì„œ ì•„ì´ì½˜ì„ ê°€ìš´ë°ì— ë§ì¶¥ë‹ˆë‹¤.
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
@@ -213,7 +213,7 @@ void CbmpLoad2Dlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// ¾ÆÀÌÄÜÀ» ±×¸³´Ï´Ù.
+		// ì•„ì´ì½˜ì„ ê·¸ë¦½ë‹ˆë‹¤.
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
@@ -222,8 +222,8 @@ void CbmpLoad2Dlg::OnPaint()
 	}
 }
 
-// »ç¿ëÀÚ°¡ ÃÖ¼ÒÈ­µÈ Ã¢À» ²ô´Â µ¿¾È¿¡ Ä¿¼­°¡ Ç¥½ÃµÇµµ·Ï ½Ã½ºÅÛ¿¡¼­
-//  ÀÌ ÇÔ¼ö¸¦ È£ÃâÇÕ´Ï´Ù.
+// ì‚¬ìš©ìê°€ ìµœì†Œí™”ëœ ì°½ì„ ë„ëŠ” ë™ì•ˆì— ì»¤ì„œê°€ í‘œì‹œë˜ë„ë¡ ì‹œìŠ¤í…œì—ì„œ
+//  ì´ í•¨ìˆ˜ë¥¼ í˜¸ì¶œí•©ë‹ˆë‹¤.
 HCURSOR CbmpLoad2Dlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -240,7 +240,7 @@ void CbmpLoad2Dlg::show(CImage* dlg)
 
 void CbmpLoad2Dlg::OnBnClickedBtnImageopen()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	if (!image.IsNull())
 	{
 		image.Destroy();
@@ -264,7 +264,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnImageopen()
 
 void CbmpLoad2Dlg::OnBnClickedBtnRefresh()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	if (!image.IsNull())
 		image.Destroy();
 	//image.Load("lenna.bmp");
@@ -274,18 +274,18 @@ void CbmpLoad2Dlg::OnBnClickedBtnRefresh()
 
 void CbmpLoad2Dlg::OnBnClickedBtnSave()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	image.Save("result.bmp", Gdiplus::ImageFormatBMP);
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnBrightness()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Brightness brightness;
 
 	if (brightness.DoModal() == IDOK)
 	{
-		// ¹à±â Ã³¸®
+		// ë°ê¸° ì²˜ë¦¬
 		register int i, j;
 
 		int value = brightness.m_edit_brightness;
@@ -313,7 +313,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnBrightness()
 
 void CbmpLoad2Dlg::OnBnClickedBtnContrast()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Contrast contrast;
 
 	if (contrast.DoModal() == IDOK)
@@ -344,7 +344,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnContrast()
 
 void CbmpLoad2Dlg::OnBnClickedBntGamma()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Gamma gamma;
 
 	if (gamma.DoModal() == IDOK)
@@ -375,7 +375,7 @@ void CbmpLoad2Dlg::OnBnClickedBntGamma()
 
 void CbmpLoad2Dlg::OnBnClickedBtnHisteq()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	HistEqul(&image, &obj);
 
 	dlg = new Image(this);
@@ -386,7 +386,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnHisteq()
 
 void CbmpLoad2Dlg::OnBnClickedBtnPlus()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	CImage image2;
@@ -425,7 +425,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnPlus()
 
 void CbmpLoad2Dlg::OnBnClickedBtnAnd()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	CImage image2;
@@ -455,7 +455,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnAnd()
 
 void CbmpLoad2Dlg::OnBnClickedBtnBitplane()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	BitPlane bitplane;
 
 	if (bitplane.DoModal() == IDOK)
@@ -488,7 +488,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnBitplane()
 
 void CbmpLoad2Dlg::OnBnClickedBtnFiltermean()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -517,7 +517,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnFiltermean()
 
 void CbmpLoad2Dlg::OnBnClickedBntGaussian()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Gaussian gaussian;
 
 	if (gaussian.DoModal() == IDOK)
@@ -590,7 +590,7 @@ void CbmpLoad2Dlg::OnBnClickedBntGaussian()
 
 void CbmpLoad2Dlg::OnBnClickedBtnUnsharp()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -616,7 +616,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnUnsharp()
 
 void CbmpLoad2Dlg::OnBnClickedBtnLaplacian()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -642,7 +642,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnLaplacian()
 
 void CbmpLoad2Dlg::OnBnClickedBtnNoisegaussian()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	NoiseGaussian NG;
 
 	if (NG.DoModal() == IDOK)
@@ -701,7 +701,7 @@ double CbmpLoad2Dlg::GaussianRand(double mean, double std)
 
 void CbmpLoad2Dlg::OnBnClickedBtnSaltpepper()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	SaltPepper SP;
 
 	if (SP.DoModal() == IDOK)
@@ -731,7 +731,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnSaltpepper()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMedean()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -765,7 +765,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMedean()
 
 void CbmpLoad2Dlg::OnBnClickedBtnDiffusion()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Diffusion diffusion;
 
 	if (diffusion.DoModal() == IDOK)
@@ -844,7 +844,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnDiffusion()
 
 void CbmpLoad2Dlg::OnBnClickedBtnTranslate()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Translate translate;
 
 	if (translate.DoModal() == IDOK)
@@ -875,7 +875,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnTranslate()
 
 void CbmpLoad2Dlg::OnBnClickedBtnResize()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Resize resize;
 	resize.m_oldWidth = image.GetWidth();
 	resize.m_oldHeight = image.GetHeight();
@@ -1019,7 +1019,7 @@ double CbmpLoad2Dlg::cubic_interpolation(double v1, double v2, double v3, double
 
 void CbmpLoad2Dlg::OnBnClickedBtnRotate()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Rotate rotate;
 
 	if (rotate.DoModal() == IDOK)
@@ -1177,7 +1177,7 @@ void CbmpLoad2Dlg::Rotate270(CImage* cpy)
 
 void CbmpLoad2Dlg::OnBnClickedBtnMirror()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -1200,7 +1200,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMirror()
 
 void CbmpLoad2Dlg::OnBnClickedBtnFlip()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -1223,10 +1223,10 @@ void CbmpLoad2Dlg::OnBnClickedBtnFlip()
 
 void CbmpLoad2Dlg::OnBnClickedBtnDft()
 {
-	// ¿À·¡ °É¸²
+	// ì˜¤ë˜ ê±¸ë¦¼
 	// disabled
 
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1259,7 +1259,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnDft()
 
 void CbmpLoad2Dlg::OnBnClickedBtnDftrc()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1294,7 +1294,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnDftrc()
 
 void CbmpLoad2Dlg::OnBnClickedBtnFft()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1331,7 +1331,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnFft()
 
 void CbmpLoad2Dlg::OnBnClickedBtnIdealLowpass()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1362,7 +1362,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnIdealLowpass()
 
 void CbmpLoad2Dlg::OnBnClickedBtnIdealHighpass()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1393,7 +1393,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnIdealHighpass()
 
 void CbmpLoad2Dlg::OnBnClickedBtnGaussianLowpass()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1424,7 +1424,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianLowpass()
 
 void CbmpLoad2Dlg::OnBnClickedBtnGaussianHighpass()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1455,7 +1455,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianHighpass()
 
 void CbmpLoad2Dlg::OnBnClickedBtnEdgeRobert()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -1484,7 +1484,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeRobert()
 
 void CbmpLoad2Dlg::OnBnClickedBtnEdgePrewitt()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	EdgePrewitt(&image, &obj);
 
 	dlg = new Image(this);
@@ -1495,7 +1495,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgePrewitt()
 
 void CbmpLoad2Dlg::OnBnClickedBtnEdgeSobel()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -1526,10 +1526,10 @@ void CbmpLoad2Dlg::OnBnClickedBtnEdgeSobel()
 
 void CbmpLoad2Dlg::OnBnClickedBtnHough()
 {
-	// ¿¡·¯ ÀÖÀ½
+	// ì—ëŸ¬ ìˆìŒ
 	// disabled
 
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
@@ -1554,7 +1554,7 @@ LineParam CbmpLoad2Dlg::HoughLine()
 	int num_rho = (int)(sqrt((double)w*w + h*h)*2);
 	int num_ang = 360;
 
-	// 0~PI °¢µµ¿¡ ÇØ´çÇÏ´Â sin, cos ÇÔ¼öÀÇ °ªÀ» ·è¾÷Å×ÀÌºí¿¡ ÀúÀå
+	// 0~PI ê°ë„ì— í•´ë‹¹í•˜ëŠ” sin, cos í•¨ìˆ˜ì˜ ê°’ì„ ë£©ì—…í…Œì´ë¸”ì— ì €ì¥
 	double* tsin = new double[num_ang];
 	double* tcos = new double[num_ang];
 
@@ -1563,7 +1563,7 @@ LineParam CbmpLoad2Dlg::HoughLine()
 		tcos[i] = (double)cos(i*PI/num_ang);
 	}
 
-	// ÃàÀû ¹è¿­(accumulate dlgsay) »ı¼º
+	// ì¶•ì  ë°°ì—´(accumulate dlgsay) ìƒì„±
 	int** dlgs = new int*[num_rho];
 	for (i = 0; i < num_rho; i++) {
 		dlgs[i] = new int[num_ang];
@@ -1584,7 +1584,7 @@ LineParam CbmpLoad2Dlg::HoughLine()
 		}
 	}
 
-	// ÃàÀû ¹è¿­¿¡¼­ ÃÖ´ë°ª Ã£±â
+	// ì¶•ì  ë°°ì—´ì—ì„œ ìµœëŒ€ê°’ ì°¾ê¸°
 	LineParam line;
 	line.rho = line.ang = 0;
 
@@ -1599,7 +1599,7 @@ LineParam CbmpLoad2Dlg::HoughLine()
 		}
 	}
 
-	// µ¿Àû ÇÒ´ç ¸Ş¸ğ¸® ÇØÁ¦
+	// ë™ì  í• ë‹¹ ë©”ëª¨ë¦¬ í•´ì œ
 	delete [] tsin, tcos;
 	for (i = 0; i < num_rho; i++) {
 		delete [] dlgs[i];
@@ -1616,18 +1616,18 @@ void CbmpLoad2Dlg::DrawLine(CImage* obj, LineParam line, BYTE c)
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
-	// ¼öÁ÷¼±ÀÎ °æ¿ì
+	// ìˆ˜ì§ì„ ì¸ ê²½ìš°
 	if (line.ang == 90) {
 		x = (int)(line.rho + 0.5);
 
 		for (y = 0; y < h; y++) {
-			obj->SetPixel(y,x,limit(c));	// byte¸¦ int·Î Çü º¯È¯ÇÏ°í ºñÆ® ½ÃÇÁÆ® ÇØ¾ßÇÏ´ÂÁö
+			obj->SetPixel(y,x,limit(c));	// byteë¥¼ intë¡œ í˜• ë³€í™˜í•˜ê³  ë¹„íŠ¸ ì‹œí”„íŠ¸ í•´ì•¼í•˜ëŠ”ì§€
 		}
 
 		return;
 	}
 
-	// (rho, ang) ÆÄ¶ó¹ÌÅÍ¸¦ ÀÌ¿ëÇÏ¿© Á÷¼±ÀÇ ½ÃÀÛ ÁÂÇ¥¿Í ³¡ ÁÂÇ¥¸¦ °è»ê
+	// (rho, ang) íŒŒë¼ë¯¸í„°ë¥¼ ì´ìš©í•˜ì—¬ ì§ì„ ì˜ ì‹œì‘ ì¢Œí‘œì™€ ë ì¢Œí‘œë¥¼ ê³„ì‚°
 	int x1 = 0;
 	int y1 = (int) floor(line.rho / cos(line.ang*PI/180) + 0.5);
 	int x2 = w - 1;
@@ -1644,7 +1644,7 @@ void CbmpLoad2Dlg::DrawLine(CImage* obj, int x1, int y1, int x2, int y2, BYTE c)
 	int w = image.GetWidth();
 	int h = image.GetHeight();
 
-	// ¼öÁ÷¼±ÀÎ °æ¿ì
+	// ìˆ˜ì§ì„ ì¸ ê²½ìš°
 	if (x1 == x2) {
 		if (y1 > y2) {
 			swap(y1, y2);
@@ -1657,7 +1657,7 @@ void CbmpLoad2Dlg::DrawLine(CImage* obj, int x1, int y1, int x2, int y2, BYTE c)
 		return;
 	}
 
-	// (x1, y1)¿¡¼­ (x2, y2)±îÁö Á÷¼± ±×¸®±â
+	// (x1, y1)ì—ì„œ (x2, y2)ê¹Œì§€ ì§ì„  ê·¸ë¦¬ê¸°
 	m = (double) (y2-y1)/(x2-x1);
 
 	if ((m > -1) && (m < 1)) {
@@ -1690,7 +1690,7 @@ void CbmpLoad2Dlg::DrawLine(CImage* obj, int x1, int y1, int x2, int y2, BYTE c)
 
 void CbmpLoad2Dlg::OnBnClickedBtnHarris()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Harris hdlgsis;
 
 	if (hdlgsis.DoModal() == IDOK)
@@ -1749,7 +1749,7 @@ CornerPoints CbmpLoad2Dlg::HarrisCorner(int th)
 	tx = ty = tmp = 0;
 	for (j = 1; j < h-1; j++) {
 		for (i = 1; i < w-1; i++) {
-			// GetPixel return typeÀÌ colorrefÀÌ°í unsigned¶ó -°¡ ³ª¿À¸é ¸Å¿ì Å« °ªÀ¸·Î ¹Ù²î¾î ÇÏ³ª¾¿ ¼öÇà
+			// GetPixel return typeì´ colorrefì´ê³  unsignedë¼ -ê°€ ë‚˜ì˜¤ë©´ ë§¤ìš° í° ê°’ìœ¼ë¡œ ë°”ë€Œì–´ í•˜ë‚˜ì”© ìˆ˜í–‰
 			tx = image.GetPixel(j-1,i+1)>>16;
 			tx += image.GetPixel(j,i+1)>>16;
 			tx += image.GetPixel(j+1,i+1)>>16;
@@ -1814,7 +1814,7 @@ CornerPoints CbmpLoad2Dlg::HarrisCorner(int th)
 		}
 	}
 
-	// ÄÚ³Ê ÀÀ´ä ÇÔ¼ö »ı¼º
+	// ì½”ë„ˆ ì‘ë‹µ í•¨ìˆ˜ ìƒì„±
 	double** crf = new double*[h];
 	for (i = 0; i < h; i++) {
 		crf[i] = new double[w];
@@ -1829,7 +1829,7 @@ CornerPoints CbmpLoad2Dlg::HarrisCorner(int th)
 		}
 	}
 
-	// ÀÓ°è°ªº¸´Ù Å« ±¹ÁöÀû ÃÖ´ë°ªÀ» Ã£¾Æ ÄÚ³Ê Æ÷ÀÎÆ®·Î °áÁ¤
+	// ì„ê³„ê°’ë³´ë‹¤ í° êµ­ì§€ì  ìµœëŒ€ê°’ì„ ì°¾ì•„ ì½”ë„ˆ í¬ì¸íŠ¸ë¡œ ê²°ì •
 	CornerPoints cp;
 	cp.num = 0;
 
@@ -1850,7 +1850,7 @@ CornerPoints CbmpLoad2Dlg::HarrisCorner(int th)
 		}
 	}
 
-	// µ¿Àû ÇÒ´ç ¸Ş¸ğ¸® ÇØÁ¦
+	// ë™ì  í• ë‹¹ ë©”ëª¨ë¦¬ í•´ì œ
 	for (i = 0; i < h; i++) {
 		delete [] dx2[i], dy2[i], dxy[i], gdx2[i], gdy2[i], gdxy[i], crf[i];
 	}
@@ -1861,7 +1861,7 @@ CornerPoints CbmpLoad2Dlg::HarrisCorner(int th)
 
 void CbmpLoad2Dlg::OnBnClickedBtnGrayscale()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i,j;
 
 	int w = image.GetWidth();
@@ -1890,7 +1890,7 @@ void CbmpLoad2Dlg::RGB_TO_HSI(double R, double G, double B, double& H, double& S
 {
 	I = (R+G+B) / 3;
 
-	if ((R == G) && (G == B)) { // GRAYSCALEÀÎ °æ¿ì
+	if ((R == G) && (G == B)) { // GRAYSCALEì¸ ê²½ìš°
 		S = 0;
 		H = 0;
 	}
@@ -1912,7 +1912,7 @@ void CbmpLoad2Dlg::RGB_TO_HSI(double R, double G, double B, double& H, double& S
 
 void CbmpLoad2Dlg::HSI_TO_RGB(double H, double S, double I, double& R, double& G, double& B)
 {
-	if (I == 0.0) { // °ËÁ¤»ö
+	if (I == 0.0) { // ê²€ì •ìƒ‰
 		R = 0.0;
 		G = 0.0;
 		B = 0.0;
@@ -1926,7 +1926,7 @@ void CbmpLoad2Dlg::HSI_TO_RGB(double H, double S, double I, double& R, double& G
 		return;
 	}
 
-	H *= 360; // [0,1] ¹üÀ§¸¦ [0,360] °¢µµ ¹üÀ§·Î º¯°æ
+	H *= 360; // [0,1] ë²”ìœ„ë¥¼ [0,360] ê°ë„ ë²”ìœ„ë¡œ ë³€ê²½
 
 	if (H <= 120) {
 		B = I*(1-S);
@@ -1975,7 +1975,7 @@ void CbmpLoad2Dlg::InitImages()
 
 void CbmpLoad2Dlg::OnBnClickedBtnSplitRgb()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -2020,7 +2020,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnSplitRgb()
 
 void CbmpLoad2Dlg::OnBnClickedBtnSplitHsi()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -2067,7 +2067,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnSplitHsi()
 
 void CbmpLoad2Dlg::OnBnClickedBtnSplitYuv()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	register int i, j;
 
 	int w = image.GetWidth();
@@ -2098,22 +2098,22 @@ void CbmpLoad2Dlg::OnBnClickedBtnSplitYuv()
 	dlgs[0] = new Image(this);
 	dlgs[0]->Create(IDD_IMAGE);
 	dlgs[0]->ShowWindow(SW_SHOW);
-	dlgs[0]->show(&img1, "Y, ÈÖµµ");
+	dlgs[0]->show(&img1, "Y, íœ˜ë„");
 
 	dlgs[1] = new Image(this);
 	dlgs[1]->Create(IDD_IMAGE);
 	dlgs[1]->ShowWindow(SW_SHOW);
-	dlgs[1]->show(&img2, "U, Ã»»ö »öÂ÷");
+	dlgs[1]->show(&img2, "U, ì²­ìƒ‰ ìƒ‰ì°¨");
 	
 	dlgs[2] = new Image(this);
 	dlgs[2]->Create(IDD_IMAGE);
 	dlgs[2]->ShowWindow(SW_SHOW);
-	dlgs[2]->show(&img3, "V, Àû»ö »öÂ÷");
+	dlgs[2]->show(&img3, "V, ì ìƒ‰ ìƒ‰ì°¨");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnCombineRgb()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
 
 	register int i, j;
@@ -2150,7 +2150,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineRgb()
 
 void CbmpLoad2Dlg::OnBnClickedBtnCombineHsi()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
 
 	register int i, j;
@@ -2191,7 +2191,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineHsi()
 
 void CbmpLoad2Dlg::OnBnClickedBtnCombineYuv()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
 
 	register int i, j;
@@ -2229,7 +2229,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineYuv()
 
 void CbmpLoad2Dlg::OnBnClickedBtnColorEdge()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
 	register int i, j;
 
@@ -2266,7 +2266,7 @@ double CbmpLoad2Dlg::CalcDist(double x, double y, double z)
 
 void CbmpLoad2Dlg::OnBnClickedBtnColorHistEq()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	OnBnClickedBtnSplitYuv();
 
 	HistEqul(&img1, &obj);
@@ -2276,7 +2276,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnColorHistEq()
 
 void CbmpLoad2Dlg::OnBnClickedBtnBinarize()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Binarize bi;
 
 	if (bi.DoModal() == IDOK) {
@@ -2291,7 +2291,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnBinarize()
 
 void CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	Binarize bi;
 
 	int th = BinarizationIterative(&image);
@@ -2311,10 +2311,10 @@ void CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter()
 
 void CbmpLoad2Dlg::OnBnClickedBtnLabeling()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	int nLabel = Labeling(&image, &obj);
 
-	char str[32] = "·¹ÀÌºí °³¼ö = ";
+	char str[32] = "ë ˆì´ë¸” ê°œìˆ˜ = ";
 	char tmp[6];
 	sprintf_s(tmp,"%d", nLabel);
 	std::strcat(str,tmp);
@@ -2327,7 +2327,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnLabeling()
 
 void CbmpLoad2Dlg::OnBnClickedBtnContourTracing()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	ContourPoints cp = ContourTracing(&image, &obj);
 
 	register int i;
@@ -2348,7 +2348,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnContourTracing()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphErosion()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	copy(&image, &obj);
 	MorphologyErosion(&image, &obj);
 
@@ -2360,7 +2360,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMorphErosion()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphDilation()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	copy(&image, &obj);
 	MorphologyDilation(&image, &obj);
 
@@ -2372,7 +2372,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMorphDilation()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphOpening()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	copy(&image, &obj);
 	MorphologyErosion(&image, &obj);
 	CImage tmp;
@@ -2387,7 +2387,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMorphOpening()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphClosing()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	copy(&image, &obj);
 	MorphologyDilation(&image, &obj);
 	CImage tmp;
@@ -2402,7 +2402,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMorphClosing()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayErosion()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	obj.Create(image.GetWidth(), image.GetHeight(), 24);
 	MorphologyGrayErosion(&image, &obj);
 
@@ -2414,7 +2414,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayErosion()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayDilation()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	obj.Create(image.GetWidth(), image.GetHeight(), 24);
 	MorphologyGrayDilation(&image, &obj);
 
@@ -2426,7 +2426,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayDilation()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayOpening()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	obj.Create(image.GetWidth(), image.GetHeight(), 24);
 	MorphologyGrayErosion(&image, &obj);
 	CImage tmp;
@@ -2441,7 +2441,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayOpening()
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayClosing()
 {
-	// TODO: ¿©±â¿¡ ÄÁÆ®·Ñ ¾Ë¸² Ã³¸®±â ÄÚµå¸¦ Ãß°¡ÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ì»¨íŠ¸ë¡¤ ì•Œë¦¼ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€í•©ë‹ˆë‹¤.
 	obj.Create(image.GetWidth(), image.GetHeight(), 24);
 	MorphologyGrayDilation(&image, &obj);
 	CImage tmp;
