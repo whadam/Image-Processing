@@ -2,58 +2,74 @@
 #include "Segment.h"
 #include "Enhancement.h"
 #include "Filter.h"
+#include "Binarize.h"
+#include "Image.h"
 
-void Binarization(CImage* image, CImage* obj, int th)
+void Binarization(CImage* image, CImage* obj, int w, int h, int th)
 {
+	Binarize bi;
 	register int i, j;
-
-	int w = image->GetWidth();
-	int h = image->GetHeight();
-
+	int pixel;
 	obj->Create(w,h,24);
 
-	int pixel;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			pixel = (image->GetPixel(j,i)>>16) > th ? 255:0;
-			obj->SetPixelRGB(j,i,pixel,pixel,pixel);
+	if (th == -1)
+	{
+		if (bi.DoModal() == IDOK)
+		{
+			th = bi.m_edit_threshold;
+
+			for (j = 0; j < h; j++)
+			{
+				for (i = 0; i < w; i++)
+				{
+					pixel = (int)(image->GetPixel(j,i)>>16) > th ? 255:0;
+					obj->SetPixelRGB(j,i,pixel,pixel,pixel);
+				}
+			}
+		}
+	}
+	else
+	{
+		for (j = 0; j < h; j++)
+		{
+			for (i = 0; i < w; i++)
+			{
+				pixel = (int)(image->GetPixel(j,i)>>16) > th ? 255:0;
+				obj->SetPixelRGB(j,i,pixel, pixel, pixel);
+			}
 		}
 	}
 }
 
-int BinarizationIterative(CImage* image)
+int BinarizationIterative(CImage* image, int w, int h)
 {
 	register int i, j;
-
-	int w = image->GetWidth();
-	int h = image->GetHeight();
-
 	float hist[256] = {0,};
-
-	Histogram(image, hist);
-
 	int T, Told;
+	float sum = 0.f, a1, b1, u1, a2, b2, u2;
 
-	float sum = 0.f;
-	for (i = 0; i < 256; i++) {
+	fnHistogram(image, hist, w, h);
+
+	for (i = 0; i < 256; i++)
 		sum += (i*hist[i]);
-	}
 
 	T = (int)sum;
 
-	float a1, b1, u1, a2, b2, u2;
-	do {
+	do
+	{
 		Told = T;
 
 		a1 = b1 = 0;
-		for (i = 0; i < Told; i++) {
+		for (i = 0; i < Told; i++)
+		{
 			a1 += (i*hist[i]);
 			b1 += hist[i];
 		}
 		u1 = a1/b1;
 
 		a2 = b2 = 0;
-		for (i = Told + 1; i < 256; i++) {
+		for (i = Told + 1; i < 256; i++)
+		{
 			a2 += (i*hist[i]);
 			b2 += hist[i];
 		}
@@ -68,12 +84,9 @@ int BinarizationIterative(CImage* image)
 	return T;
 }
 
-int Labeling(CImage* image, CImage* obj)
+int Labeling(CImage* image, CImage* obj, int w, int h)
 {
 	register int i, j;
-
-	int w = image->GetWidth();
-	int h = image->GetHeight();
 
 	// 임시로 레이블을 저장할 메모리 공간과 등가 테이블 생성
 	int** map = new int*[h];
@@ -179,12 +192,9 @@ int Labeling(CImage* image, CImage* obj)
 	return (cnt-1);
 }
 
-ContourPoints ContourTracing(CImage* image, CImage* obj)
+void ContourTracing(CImage* image, CImage* obj, int w, int h)
 {
 	register int i,j;
-
-	int w = image->GetWidth();
-	int h = image->GetHeight();
 
 	int x, y, nx, ny, dold, d, cnt;
 	int dir[8][2] = {
@@ -249,15 +259,14 @@ ContourPoints ContourTracing(CImage* image, CImage* obj)
 		}
 	}
 
-	return cp;
+	obj->Create(w,h,24);
+	for (i = 0; i < cp.num; i++)
+		obj->SetPixelRGB(cp.y[i], cp.x[i], 255,255,255);
 }
 
-void MorphologyErosion(CImage* image, CImage* obj)
+void MorphologyErosion(CImage* image, CImage* obj, int w, int h)
 {
 	register int i, j;
-
-	int w = image->GetWidth();
-	int h = image->GetHeight();
 
 	for (j = 1; j < h-1; j++) {
 		for (i = 1; i < w-1; i++) {
@@ -278,12 +287,9 @@ void MorphologyErosion(CImage* image, CImage* obj)
 	}
 }
 
-void MorphologyDilation(CImage* image, CImage* obj)
+void MorphologyDilation(CImage* image, CImage* obj, int w, int h)
 {
 	register int i, j;
-
-	int w = image->GetWidth();
-	int h = image->GetHeight();
 
 	for (j = 1; j < h-1; j++) {
 		for (i = 1; i < w-1; i++) {
@@ -304,27 +310,52 @@ void MorphologyDilation(CImage* image, CImage* obj)
 	}
 }
 
-void MorphologyGrayErosion(CImage* image, CImage* obj)
+void MorphologyOpening(CImage* image, CImage* obj, int w, int h)
+{
+	copy(image, obj);
+	MorphologyErosion(image, obj,w,h);
+
+	CImage tmp;
+	copy(obj, &tmp);
+	MorphologyDilation(&tmp, obj,w,h);
+}
+
+void MorphologyClosing(CImage* image, CImage* obj, int w, int h)
+{
+	copy(image, obj);
+	MorphologyDilation(image, obj,w,h);
+
+	CImage tmp;
+	copy(obj, &tmp);
+	MorphologyErosion(&tmp, obj,w,h);
+}
+
+void MorphologyGrayErosion(CImage* image, CImage* obj, int w, int h)
 {
 	register int i, j, m, n;
 
-	int w = image->GetWidth();
-	int h = image->GetHeight();
+	if (obj->IsNull())
+		obj->Create(w,h,24);
 
 	int x, y ,pmin, pixel;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
+	for (j = 0; j < h; j++)
+	{
+		for (i = 0; i < w; i++)
+		{
 			pmin = 255;
-			for (n = -1; n <= 1; n++) {
-				for (m = -1; m <= 1; m++) {
+
+			for (n = -1; n <= 1; n++)
+			{
+				for (m = -1; m <= 1; m++)
+				{
 					x = i + m;
 					y = j + n;
 					
-					if (x >= 0 && x < w && y >= 0 && y < h) {
+					if (x >= 0 && x < w && y >= 0 && y < h)
+					{
 						pixel = image->GetPixel(y,x) >> 16;
-						if (pixel < pmin) {
+						if (pixel < pmin)
 							pmin = pixel;
-						}
 					}
 				}
 			}
@@ -333,31 +364,51 @@ void MorphologyGrayErosion(CImage* image, CImage* obj)
 	}
 }
 
-void MorphologyGrayDilation(CImage* image, CImage* obj)
+void MorphologyGrayDilation(CImage* image, CImage* obj, int w, int h)
 {
 	register int i, j, m, n;
 
-	int w = image->GetWidth();
-	int h = image->GetHeight();
+	if (obj->IsNull())
+		obj->Create(w,h,24);
 
 	int x, y ,pmax, pixel;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
+	for (j = 0; j < h; j++)
+	{
+		for (i = 0; i < w; i++)
+		{
 			pmax = 0;
-			for (n = -1; n <= 1; n++) {
-				for (m = -1; m <= 1; m++) {
+			for (n = -1; n <= 1; n++)
+			{
+				for (m = -1; m <= 1; m++)
+				{
 					x = i + m;
 					y = j + n;
 					
-					if (x >= 0 && x < w && y >= 0 && y < h) {
+					if (x >= 0 && x < w && y >= 0 && y < h)
+					{
 						pixel = image->GetPixel(y,x) >> 16;
-						if (pixel > pmax) {
+						if (pixel > pmax)
 							pmax = pixel;
-						}
 					}
 				}
 			}
 			obj->SetPixel(j,i,limit(pmax));
 		}
 	}
+}
+
+void MorphologyGrayOpening(CImage* image, CImage* obj, int w, int h)
+{
+	MorphologyGrayErosion(image, obj, w,h);
+	CImage tmp;
+	copy(obj, &tmp);
+	MorphologyGrayDilation(&tmp, obj, w,h);
+}
+
+void MorphologyGrayClosing(CImage* image, CImage* obj, int w, int h)
+{
+	MorphologyGrayDilation(image, obj, w,h);
+	CImage tmp;
+	copy(obj, &tmp);
+	MorphologyGrayErosion(&tmp, obj, w,h);
 }

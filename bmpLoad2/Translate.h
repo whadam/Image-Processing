@@ -1,5 +1,5 @@
 #pragma once
-
+#include "resource.h"
 
 // Translate 대화 상자입니다.
 

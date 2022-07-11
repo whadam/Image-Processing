@@ -13,7 +13,7 @@ public:
 	virtual ~Image();
 
 // 대화 상자 데이터입니다.
-	enum { IDD = IDD_IMAGE };
+	enum { IDD = 147 };
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV 지원입니다.
@@ -38,7 +38,8 @@ inline void copy(T* src, T* dst)
 	int w = src->GetWidth();
 	int h = src->GetHeight();
 
-	if (!dst->IsNull()) dst->Destroy();
+	if (!dst->IsNull())
+		dst->Destroy();
 	dst->Create(w,h,24);
 
 	for (i = 0; i < w; i++) {

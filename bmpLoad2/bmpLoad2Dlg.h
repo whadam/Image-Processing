@@ -3,22 +3,7 @@
 
 #pragma once
 #include "Image.h"
-#include "Filter.h"
-#include "Enhancement.h"
-
-#define RGB2GRAY(r, g, b) (int)(0.299*(r) + 0.587*(g) + 0.114*(b))
-//const int MAX_CORNER = 5000;
-
-//typedef struct _LineParam {
-//	double rho;	// 직선의 방정식의 ρ
-//	double ang;	// theta θ
-//} LineParam;
-//
-//typedef struct _CornerPoints {
-//	int num;
-//	int x[MAX_CORNER];
-//	int y[MAX_CORNER];
-//} CornerPoints;
+#include <vector>
 
 // CbmpLoad2Dlg 대화 상자
 class CbmpLoad2Dlg : public CDialogEx
@@ -28,7 +13,7 @@ public:
 	CbmpLoad2Dlg(CWnd* pParent = NULL);	// 표준 생성자입니다.
 
 // 대화 상자 데이터입니다.
-	enum { IDD = IDD_BMPLOAD2_DIALOG };
+	enum { IDD = 102 };
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 지원입니다.
@@ -47,10 +32,16 @@ protected:
 public:
 	CStatic m_picture_control;
 	CImage image, img1, img2, img3, obj;
+	std::vector <CImage*> m_images;
 	Image* dlg;
 	Image** dlgs;
+	std::vector <Image*> m_dlgs;
+	int w, h, cnt;
 
 	void show(CImage* img);
+	void CreateDlg(char*);
+	void CreateDlg(char*, char*, char*);
+	void reset();
 
 	afx_msg void OnBnClickedBtnImageopen();
 	afx_msg void OnBnClickedBtnBrightness();
@@ -66,22 +57,13 @@ public:
 	afx_msg void OnBnClickedBtnUnsharp();
 	afx_msg void OnBnClickedBtnLaplacian();
 	afx_msg void OnBnClickedBtnNoisegaussian();
-	double GaussianRand(double mean, double std);
 	afx_msg void OnBnClickedBtnSaltpepper();
 	afx_msg void OnBnClickedBtnMedean();
 	afx_msg void OnBnClickedBtnDiffusion();
 	afx_msg void OnBnClickedBtnAnd();
 	afx_msg void OnBnClickedBtnTranslate();
 	afx_msg void OnBnClickedBtnResize();
-	void Nearest(int w, int h, int nw, int nh);
-	void Bilinear(int w, int h, int nw, int nh);
-	void CubicConvolution(int w, int h, int nw, int nh);
-	double cubic_interpolation(double v1, double v2, double v3, double v4, double d);
 	afx_msg void OnBnClickedBtnRotate();
-	void RotateAny(int angle, CImage* cpy);
-	void Rotate90(CImage* cpy);
-	void Rotate180(CImage* cpy);
-	void Rotate270(CImage* cpy);
 	afx_msg void OnBnClickedBtnMirror();
 	afx_msg void OnBnClickedBtnFlip();
 	afx_msg void OnBnClickedBtnDft();
@@ -95,17 +77,8 @@ public:
 	afx_msg void OnBnClickedBtnEdgePrewitt();
 	afx_msg void OnBnClickedBtnEdgeSobel();
 	afx_msg void OnBnClickedBtnHough();
-	LineParam HoughLine();
-	void DrawLine(CImage*, LineParam, BYTE);
-	void DrawLine(CImage*, int, int, int, int, BYTE);
 	afx_msg void OnBnClickedBtnHarris();
-	CornerPoints HarrisCorner(int th);
 	afx_msg void OnBnClickedBtnGrayscale();
-	void RGB_TO_HSI(double, double, double, double&, double&, double&);
-	void HSI_TO_RGB(double, double, double, double&, double&, double&);
-	void RGB_TO_YUV(BYTE, BYTE, BYTE, BYTE&, BYTE&, BYTE&);
-	void YUV_TO_RGB(BYTE, BYTE, BYTE, BYTE&, BYTE&, BYTE&);
-	void InitImages();
 	afx_msg void OnBnClickedBtnSplitRgb();
 	afx_msg void OnBnClickedBtnSplitHsi();
 	afx_msg void OnBnClickedBtnSplitYuv();
@@ -113,7 +86,6 @@ public:
 	afx_msg void OnBnClickedBtnCombineHsi();
 	afx_msg void OnBnClickedBtnCombineYuv();
 	afx_msg void OnBnClickedBtnColorEdge();
-	double CalcDist(double, double, double);
 	afx_msg void OnBnClickedBtnColorHistEq();
 	afx_msg void OnBnClickedBtnBinarize();
 	afx_msg void OnBnClickedBtnBinarizationIter();

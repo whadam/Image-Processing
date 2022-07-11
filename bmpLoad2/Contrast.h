@@ -1,6 +1,6 @@
 #pragma once
-#include "afxcmn.h"
-
+#include "stdafx.h"
+//#include "resource.h"
 
 // Contrast 대화 상자입니다.
 

@@ -1,6 +1,5 @@
 #pragma once
 
-
 // BitPlane 대화 상자입니다.
 
 class BitPlane : public CDialog

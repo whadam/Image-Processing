@@ -11,7 +11,7 @@
 
 IMPLEMENT_DYNAMIC(Image, CDialog)
 
-Image::Image(CWnd* pParent /*=NULL*/)
+	Image::Image(CWnd* pParent /*=NULL*/)
 	: CDialog(Image::IDD, pParent)
 	, m_name(_T(""))
 {
@@ -40,20 +40,25 @@ END_MESSAGE_MAP()
 
 void Image::show(CImage* image, char* name)
 {
-	
-	tmp = image;
 	m_name = name;
 	UpdateData(FALSE);
-	CDC* dc;
-	dc = m_image_control.GetDC();
-	image->BitBlt(dc->m_hDC, 0,0, SRCCOPY);
-	ReleaseDC(dc);
+	tmp = image;
+	if (image != nullptr)
+	{
+		CDC* dc;
+		dc = m_image_control.GetDC();
+		image->BitBlt(dc->m_hDC, 0,0, SRCCOPY);
+		ReleaseDC(dc);
+	}
 }
 
 void Image::OnBnClickedOk()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	tmp->Destroy();
+	if (tmp != nullptr)
+		tmp->Destroy();
+	/*if (parent->cnt >= 10)
+		parent->reset();*/
 	CDialog::OnOK();
 }
 
@@ -61,7 +66,10 @@ void Image::OnSysCommand(UINT nID, LPARAM lParam)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	if (nID == SC_CLOSE) { // X버튼으로 종료 시
-		tmp->Destroy();
+		if (tmp != nullptr)
+			tmp->Destroy();
+		/*if (parent->cnt >= 10)
+			parent->reset();*/
 	}
 	CDialog::OnSysCommand(nID, lParam);
 }

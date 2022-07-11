@@ -13,30 +13,29 @@ void Fourier::Free()
 {
 	register int i;
 
-	if (pRe) {
-		for (i = 0; i < h; i++) {
+	if (pRe)
+	{
+		for (i = 0; i < h; i++)
 			delete [] pRe[i];
-		}
 		delete [] pRe;
 	}
 
-	if (pIm) {
-		for (i = 0; i < h; i++) {
+	if (pIm)
+	{
+		for (i = 0; i < h; i++)
 			delete [] pIm[i];
-		}
 		delete [] pIm;
 	}
 }
 
 int Fourier::limit(int pixel)
 {
-	if (pixel > 255) {
+	if (pixel > 255)
 		return (255 << 16) + (255 << 8) + 255;
-	}
-	else if (pixel < 0) return 0;
-	else {
+	else if (pixel < 0)
+		return 0;
+	else
 		return (pixel<<16) + (pixel<<8) + pixel;
-	}
 }
 
 void Fourier::SetImage(CImage* img)
@@ -71,6 +70,7 @@ void Fourier::GetImage(CImage* img)
 	if (pRe == NULL) return;
 
 	register int i, j;
+	img->Create(w,h,24);
 
 	int pixel;
 	for (j = 0; j < h; j++) {
@@ -84,6 +84,7 @@ void Fourier::GetImage(CImage* img)
 void Fourier::GetSpectrumImage(CImage* img)
 {
 	register int i, j;
+	img->Create(w,h,24);
 
 	// 스펙트럼 값을 저장할 임시 버퍼 메모리 공간 할당
 	double** pSpectrum = new double*[h];
@@ -132,6 +133,7 @@ void Fourier::GetSpectrumImage(CImage* img)
 void Fourier::GetphaseImage(CImage* img)
 {
 	register int i, j;
+	img->Create(w,h,24);
 
 	// 위상각을 저장할 임시 버퍼 메모리 공간 할당
 	double** pPhase = new double*[h];
@@ -232,13 +234,16 @@ void Fourier::DFTRC(int dir)
 	memset(re, 0, sizeof(double)*w);
 	memset(im, 0, sizeof(double)*w);
 
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
+	for (j = 0; j < h; j++) 
+	{
+		for (i = 0; i < w; i++) 
+		{
 			re[i] = pRe[j][i];
 			im[i] = pIm[j][i];
 		}
 		DFT1d(re, im, w, dir);
-		for (i = 0; i < w; i++) {
+		for (i = 0; i < w; i++) 
+		{
 			pRe[j][i] = re[i];
 			pIm[j][i] = im[i];
 		}

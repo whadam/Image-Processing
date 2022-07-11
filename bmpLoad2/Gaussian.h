@@ -1,5 +1,5 @@
 #pragma once
-
+#include "resource.h"
 
 // Gaussian 대화 상자입니다.
 

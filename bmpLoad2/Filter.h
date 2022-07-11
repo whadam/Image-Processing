@@ -1,5 +1,4 @@
 #pragma once
-#include <atlimage.h>
 
 #define MAX_CORNER 5000
 
@@ -14,31 +13,32 @@ typedef struct _CornerPoints {
 	int y[MAX_CORNER];
 } CornerPoints;
 
-//void FilterMean(CImage*);
-//void FilterWeightedMean(CImage*);
-//void FilterGaussian(CImage*, double);
-//
-//void FilterLaplacian(CImage*);
-//void FilterUnsharpMask(CImage*);
-//
-//void FilterNoiseGaussian(CImage*, int);
-//void FilterNoiseSaltNPepper(CImage*, int);
-//double FilterGaussianRand(double, double);
-//
-//void FilterMedean(CImage*);
-//
-//void FilterDiffusion(CImage*, float, float, int);
-//
-void EdgeRoberts(CImage*);
-void EdgePrewitt(CImage*, CImage*);
-void EdgeSobel(CImage*);
+void fnMean(CImage*, CImage*, int, int);
+void fnGaussian(CImage*, CImage*, int, int);
 
-//LineParam HoughLine(CImage*);
+void fnUnsharpMask(CImage*, CImage*, int, int);
+void fnLaplacian(CImage*, CImage*, int, int);
 
-void DrawLine(CImage*, CImage*, LineParam, BYTE);
-void DrawLine(CImage*, CImage*, int, int, int, int, BYTE);
+void fnNoiseGaussian(CImage*, CImage*, int, int);
+void fnNoiseSaltNPepper(CImage*, CImage*, int, int);
+double fnGaussianRand(double, double);
 
-//CornerPoints HarrisCorner(CImage*, double);
+void fnMedean(CImage*, CImage*, int, int);
+
+void fnDiffusion(CImage*, CImage*, int, int);
+
+void fnEdgeRoberts(CImage*, CImage*, int, int);
+void fnEdgePrewitt(CImage*, CImage*, int, int);
+void fnEdgeSobel(CImage*, CImage*, int, int);
+
+LineParam fnHoughLine(CImage*, int, int);
+
+void fnDrawLine(CImage*, LineParam, BYTE, int, int);
+void fnDrawLine(CImage*, int, int, int, int, BYTE, int , int);
+
+void fnHarrisCorner(CImage*, CImage*, int, int);
+_CornerPoints fnCornerPoints(CImage*, int, int, double);
+
 
 template<typename T> 
 inline int limit(T pixel)
@@ -51,10 +51,3 @@ inline int limit(T pixel)
 		return (pixel<<16) + (pixel<<8) + pixel;
 	}
 }
-//template<typename T> 
-//inline void swap(T& lha, T& rha)
-//{
-//	T tmp = lha;
-//	lha = rha;
-//	rha = tmp;
-//}

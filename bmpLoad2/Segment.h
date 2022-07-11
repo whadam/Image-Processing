@@ -10,15 +10,19 @@ typedef struct _ContourPoints {
 	int y[MAX_CONTOUR];
 } ContourPoints;
 
-void Binarization(CImage*, CImage*, int);
-int BinarizationIterative(CImage*);
+void Binarization(CImage* image, CImage* obj, int w, int h, int th = -1);
+int BinarizationIterative(CImage*, int, int);
 
-int Labeling(CImage*, CImage*);
+int Labeling(CImage*, CImage*, int, int);
 
-ContourPoints ContourTracing(CImage*, CImage*);
+void ContourTracing(CImage*, CImage*, int, int);
 
-void MorphologyErosion(CImage*, CImage*);
-void MorphologyDilation(CImage*, CImage*);
+void MorphologyErosion(CImage*, CImage*, int, int);
+void MorphologyDilation(CImage*, CImage*, int, int);
+void MorphologyOpening(CImage* image, CImage* obj, int w, int h);
+void MorphologyClosing(CImage* image, CImage* obj, int w, int h);
 
-void MorphologyGrayErosion(CImage*, CImage*);
-void MorphologyGrayDilation(CImage*, CImage*);
+void MorphologyGrayErosion(CImage*, CImage*, int, int);
+void MorphologyGrayDilation(CImage*, CImage*, int, int);
+void MorphologyGrayOpening(CImage*, CImage*, int, int);
+void MorphologyGrayClosing(CImage*, CImage*, int, int);

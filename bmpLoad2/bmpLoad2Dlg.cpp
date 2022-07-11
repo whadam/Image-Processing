@@ -6,28 +6,22 @@
 #include "bmpLoad2Dlg.h"
 #include "afxdialogex.h"
 #include "afxwin.h"
+#include "Enhancement.h"
+#include "Geometry.h"
+#include "resource.h"
 
-#include "Brightness.h"
-#include "Contrast.h"
-#include "Gamma.h"
-#include "BitPlane.h"
-#include "Gaussian.h"
-#include "NoiseGaussian.h"
-#include "SaltPepper.h"
-#include "Diffusion.h"
-#include "Translate.h"
-#include "Resize.h"
-#include "Rotate.h"
 #include "Fourier.h"
 #include "Freq_Space.h"
 #include "Harris.h"
 #include "Segment.h"
-#include "Binarize.h"
+#include "Color.h"
+#include "Filter.h"
 
 #include <Windows.h>
 #include <math.h>
 #include <algorithm>
 #include <string.h>
+#include <ctime>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -176,6 +170,13 @@ BOOL CbmpLoad2Dlg::OnInitDialog()
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
 	dlgs = new Image*[3];
+	for (int i = 0; i < 12; i++)
+	{
+		m_images.push_back(new CImage);
+		m_dlgs.push_back(new Image(this));
+		m_dlgs[i]->Create(IDD_IMAGE);
+	}
+	cnt = 0;
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -229,31 +230,57 @@ HCURSOR CbmpLoad2Dlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-void CbmpLoad2Dlg::show(CImage* dlg)
+void CbmpLoad2Dlg::show(CImage* img)
 {
+	w = img->GetWidth();
+	h = img->GetHeight();
 	CDC* dc;
 	dc = m_picture_control.GetDC();
 	dc->CloseFigure();
-	dlg->BitBlt(dc->m_hDC, 0,0, SRCCOPY);
+	img->BitBlt(dc->m_hDC, 0,0, SRCCOPY);
 	ReleaseDC(dc);
+}
+
+void CbmpLoad2Dlg::CreateDlg(char* str)
+{
+	m_dlgs[cnt]->ShowWindow(SW_SHOW);
+	m_dlgs[cnt]->show(m_images[cnt], str);
+	cnt++;
+	if (cnt >= 10)
+		reset();
+}
+
+void CbmpLoad2Dlg::CreateDlg(char* str1, char* str2, char* str3)
+{
+	m_dlgs[cnt]->ShowWindow(SW_SHOW);
+	m_dlgs[cnt]->show(m_images[cnt], str1);
+
+	m_dlgs[cnt+1]->ShowWindow(SW_SHOW);
+	m_dlgs[cnt+1]->show(m_images[cnt+1], str2);
+
+	m_dlgs[cnt+2]->ShowWindow(SW_SHOW);
+	m_dlgs[cnt+2]->show(m_images[cnt+2], str3);
+
+	cnt += 3;
+	if (cnt >= 10)
+		reset();
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnImageopen()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (!image.IsNull())
-	{
-		image.Destroy();
-	}
-	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, NULL);
+	reset();
+	image.Destroy();
+
+	CFileDialog fdlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, NULL);
 	char path[128];
 	GetCurrentDirectory(128, path);
-	dlg.m_ofn.lpstrInitialDir = path;
+	fdlg.m_ofn.lpstrInitialDir = path;
 
 	CString filename;
-	if (IDOK == dlg.DoModal())
+	if (IDOK == fdlg.DoModal())
 	{
-		filename = dlg.GetFileName();
+		filename = fdlg.GetFileName();
 	}
 	else return;
 
@@ -265,960 +292,231 @@ void CbmpLoad2Dlg::OnBnClickedBtnImageopen()
 void CbmpLoad2Dlg::OnBnClickedBtnRefresh()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (!image.IsNull())
-		image.Destroy();
-	//image.Load("lenna.bmp");
-	image.Load("peppers.bmp");
+	reset();
+	image.Destroy();
+	image.Load("lenna.bmp");
 	show(&image);
+}
+
+void CbmpLoad2Dlg::reset()
+{
+	for (auto a : m_images)
+		a->Destroy();
+	cnt = 0;
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnSave()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	image.Save("result.bmp", Gdiplus::ImageFormatBMP);
+	if (!image.IsNull())
+		image.Save("result.bmp", Gdiplus::ImageFormatBMP);
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnBrightness()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Brightness brightness;
+	if (image == nullptr) return;
 
-	if (brightness.DoModal() == IDOK)
-	{
-		// 밝기 처리
-		register int i, j;
+	fnBrightness(&image, m_images[cnt], w, h);
 
-		int value = brightness.m_edit_brightness;
-		int pixel = 0;
-
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		for (i = 0; i < w; i++)
-		{
-			for (j = 0; j < h; j++)
-			{
-				pixel = image.GetPixel(i,j) >> 16;
-				pixel += value;
-				if (pixel > 255) pixel = 255;
-				else if (pixel < 0) pixel = 0;
-				pixel += (pixel << 16) + (pixel << 8);
-				image.SetPixel(i,j,pixel);
-			}
-		}
-
-		show(&image);
-	}
+	CreateDlg("Brightness");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnContrast()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Contrast contrast;
+	if (image == nullptr) return;
 
-	if (contrast.DoModal() == IDOK)
-	{
-		register int i, j;
+	fnContrast(&image, m_images[cnt], w, h);
 
-		int a = contrast.m_edit_contrast;
-		unsigned char pixel;
-		int value;
-
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		for (j = 0; j < h; j++) {
-			for (i = 0; i < w; i++) {
-				pixel = image.GetPixel(j,i);
-				value = pixel + (pixel-128)*a/100;
-				if (value > 255) value = 255;
-				else if (value < 0) value = 0;
-				value += (value << 16) + (value << 8);
-				image.SetPixel(j,i,value);
-			}
-		}
-
-		show(&image);
-	}
+	CreateDlg("Contrast");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBntGamma()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Gamma gamma;
+	if (image == nullptr) return;
 
-	if (gamma.DoModal() == IDOK)
-	{
-		register int i, j;
-		float g = gamma.m_edit_gamma;
-
-		float invgamma = 1.f / g;
-
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		int pixel;
-		for (j = 0; j < h; j++) {
-			for (i = 0; i < w; i++) {
-				pixel = image.GetPixel(j,i) >> 16;
-				pixel = pow((pixel/255.f), invgamma) * 255 + 0.5f;
-				if (pixel > 255) pixel = 255;
-				else if (pixel < 0) pixel = 0;
-				pixel += (pixel << 16) + (pixel << 8);
-				image.SetPixel(j,i,pixel);
-			}
-		}
-
-		show(&image);
-	}
+	fnGamma(&image, m_images[cnt], w, h);
+	
+	CreateDlg("Gamma");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnHisteq()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	HistEqul(&image, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Histogram Equlize");
+	fnHistEqual(&image, m_images[cnt], w, h);
+
+	CreateDlg("Histogram Equlize");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnPlus()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	CImage image2;
-	if (!image2.IsNull())
-	{
-		image2.Destroy();
-	}
-	image2.Load("hole2.bmp");
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	if (w != image2.GetWidth() || h != image2.GetHeight())
-	{
+	fnAdd(&image, m_images[cnt], w, h);
+	if (m_images[cnt]->IsNull())
 		return;
-	}
 
-	CImage result;
-	result.Create(w,h,24);
-	int value = 0;
-
-	for (i = 0; i < w; i++)
-	{
-		for (j = 0; j < h; j++)
-		{
-			value = (image.GetPixel(i,j) >> 16) + (image2.GetPixel(i,j) >> 16);
-			if (value > 255) value = 255;
-			else if (value < 0) value = 0;
-			value += (value << 16) + (value << 8);
-			result.SetPixel(i, j, value);
-		}
-	}
-	copy(&result, &image);
-	show(&image);
+	CreateDlg("Add");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnAnd()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	CImage image2;
-	if (!image2.IsNull()) image2.Destroy();
-	image2.Load("gray128.bmp");
+	fnAnd(&image, m_images[cnt], w, h);
+	if (m_images[cnt]->IsNull())
+		return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	if (w != image2.GetWidth() || h != image2.GetHeight()) return;
-
-	CImage result;
-	result.Create(w,h,24);
-	int value = 0;
-
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			value = image.GetPixel(j,i) & image2.GetPixel(j,i);
-			result.SetPixel(j,i,value);
-		}
-	}
-
-	copy(&result, &image);
-
-	show(&image);
+	CreateDlg("And");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnBitplane()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	BitPlane bitplane;
+	if (image == nullptr) return;
 
-	if (bitplane.DoModal() == IDOK)
-	{
-		register int i, j;
+	fnBitPlane(&image, m_images[cnt], w, h);
+	if (m_images[cnt]->IsNull())
+		return;
 
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		CImage result;
-		copy(&image, &result);
-
-		int pixel = 0;
-		int getpixel = 0;
-		int bit = bitplane.m_bit;
-		for (i = 0; i < w; i++)
-		{
-			for (j = 0; j < h; j++)
-			{
-				getpixel = result.GetPixel(i,j) >> 16;
-				pixel = (getpixel & (1 << bit-1)) ? 255 : 0;
-				pixel += (pixel << 16) + (pixel << 8);
-				image.SetPixel(i,j,pixel);
-			}
-		}
-
-		show(&image);
-	}
+	CreateDlg("Bit Plane");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnFiltermean()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnMean(&image, m_images[cnt], w, h);
 
-	CImage result;
-	copy(&image, &result);
-
-	int temp;
-	for (i = 1; i < w-1; i++) {
-		for (j = 1; j < h-1; j++) {
-			temp = 0;
-			temp = (result.GetPixel(i-1,j-1) & 255) + (result.GetPixel(i-1,j) & 255) + (result.GetPixel(i-1,j+1) & 255) +
-				(result.GetPixel(i,j-1) & 255) +	(result.GetPixel(i,j) & 255)	+ (result.GetPixel(i,j+1) & 255) +
-				(result.GetPixel(i+1,j-1) & 255) + (result.GetPixel(i+1,j) & 255) + (result.GetPixel(i+1,j+1) & 255);
-			temp = temp / 9. + 0.5;
-			if (temp > 255) temp = 255;
-			else if (temp < 0) temp = 0;
-			temp += (temp << 16) + (temp << 8);
-			image.SetPixel(i,j,temp);
-		}
-	}
-
-	show(&image);
+	CreateDlg("Filter Mean");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBntGaussian()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Gaussian gaussian;
+	if (image == nullptr) return;
 
-	if (gaussian.DoModal() == IDOK)
-	{
-		register int i,j,k,x;
+	fnGaussian(&image, m_images[cnt], w, h);
 
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		double sigma = gaussian.m_sigma;
-		int dim = (int) max(3.0, 2*4*sigma + 1.0);
-		if (dim % 2 == 0) dim++;
-		int dim2 = (int) dim/2;
-
-		double* pMask = new double[dim];
-		for (i = 0; i < dim; i++) {
-			x = i - dim2;
-			pMask[i] = exp(-(x*x)/(2*sigma*sigma)) / (sqrt(2*PI)*sigma);
-		}
-
-		double** buf = new double*[h];
-		for (i = 0; i < h; i++) {
-			buf[i] = new double[w];
-			memset(buf[i], 0, sizeof(double)*w);
-		}
-
-		double sum1, sum2;
-		for (i = 0; i < w; i++) {
-			for (j = 0; j < h; j++) {
-				sum1 = sum2 = 0;
-
-				for (k = 0; k < dim; k++) {
-					x = k - dim2 + j;
-					if (x >= 0 && x < h) {
-						sum1 += pMask[k];
-						sum2 += (pMask[k] * (image.GetPixel(x,i) >> 16));
-					}
-				}
-
-				buf[j][i] = sum2 / sum1;
-			}
-		}
-
-		int value = 0;
-		for (j = 0; j < h; j++) {
-			for (i = 0; i < w; i++) {
-				sum1 = sum2 = 0;
-
-				for (k = 0; k < dim; k++) {
-					x = k - dim2 + i;
-					if (x >= 0 && x < w) {
-						sum1 += pMask[k];
-						sum2 += (pMask[k] * buf[j][x]);
-					}
-				}
-				value = sum2 / sum1;
-				value += (value << 16) + (value << 8);
-				image.SetPixel(j,i,value);
-			}
-		}
-
-		show(&image);
-
-		for (i = 0; i < h; i++) {
-			delete [] buf[i];
-		}
-		delete [] pMask, buf;
-	}
+	CreateDlg("Gaussian");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnUnsharp()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnUnsharpMask(&image, m_images[cnt], w, h);
 
-	CImage result;
-	copy(&image, &result);
-
-	int temp;
-	for (i = 1; i < w-1; i++) {
-		for (j = 1; j < h-1; j++) {
-			temp = 5*(result.GetPixel(i,j) >> 16) - (result.GetPixel(i-1,j) >> 16) - (result.GetPixel(i,j-1) >> 16)
-				- (result.GetPixel(i+1,j) >> 16) - (result.GetPixel(i,j+1) >> 16);
-			if (temp > 255) temp = 255;
-			else if (temp < 0) temp = 0;
-			temp += (temp << 16) + (temp << 8);
-			image.SetPixel(i,j,temp);
-		}
-	}
-
-	show(&image);
+	CreateDlg("Unsharp Mask");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnLaplacian()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnLaplacian(&image, m_images[cnt], w, h);
 
-	CImage result;
-	copy(&image, &result);
-
-	int temp;
-	for (j = 1; j < h-1; j++) {
-		for (i = 1; i < w-1; i++) {
-			temp = 4*(result.GetPixel(j,i) >> 16) - (result.GetPixel(j-1,i) >> 16) - (result.GetPixel(j,i+1) >> 16)
-				- (result.GetPixel(j+1,i) >> 16) - (result.GetPixel(j,i-1) >> 16);
-			if (temp > 255) temp = 255;
-			else if (temp < 0) temp = 0;
-			temp += (temp << 16) + (temp << 8);
-			image.SetPixel(j,i,temp);
-		}
-	}
-
-	show(&image);
+	CreateDlg("Laplacian");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnNoisegaussian()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	NoiseGaussian NG;
+	if (image == nullptr) return;
 
-	if (NG.DoModal() == IDOK)
-	{
-		register int i, j;
+	fnNoiseGaussian(&image, m_images[cnt], w, h);
 
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		double amount = NG.m_deviation;
-
-		srand((unsigned)time(NULL));
-
-		double rnd;
-		int value;
-		for (j = 0; j < h; j++) {
-			for (i = 0; i < w; i++) {
-				rnd = GaussianRand(0, amount);
-				value = (image.GetPixel(j,i) >> 16) + rnd;
-				value += (value << 16) + (value << 8);
-				image.SetPixel(j,i,value);
-			}
-		}
-
-		show(&image);
-	}
-}
-
-double CbmpLoad2Dlg::GaussianRand(double mean, double std)
-{
-	double x1, x2, radius, factor, y1;
-	static double y2;
-	static int use_last = 0;
-
-	if (use_last) {
-		y1 = y2;
-		use_last = 0;
-	}
-	else {
-		do {
-			x1 = 2.0 * rand() / RAND_MAX - 1.0;
-			x2 = 2.0 * rand() / RAND_MAX - 1.0;
-			radius = x1 * x1 + x2 * x2;
-		} while (radius < 0.00000001 || radius >= 1.0);
-
-		factor = sqrt((-2.0 * log(radius)) / radius);
-
-		y1 = x1 * factor;
-		y2 = x2 * factor;
-
-		use_last = 1;
-	}
-
-	return (mean + y1*std);
+	CreateDlg("Noise Gaussian");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnSaltpepper()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	SaltPepper SP;
+	if (image == nullptr) return;
 
-	if (SP.DoModal() == IDOK)
-	{
-		register int i, j;
+	copy(&image, m_images[cnt]);
+	fnNoiseSaltNPepper(&image, m_images[cnt], w, h);
 
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		double amount = SP.m_deviation;
-
-		srand((unsigned)time(NULL));
-
-		int rnd;
-		for (j = 0; j < h; j++) {
-			for (i = 0; i < w; i++) {
-				rnd = (int) (rand() * 100 / RAND_MAX);
-
-				if (rnd < amount/2) image.SetPixel(j,i,0);
-				else if (rnd < amount) image.SetPixel(j,i,0xffffffff);
-			}
-		}
-
-		show(&image);
-	}
+	CreateDlg("Noise Salt and Pepper");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMedean()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnMedean(&image, m_images[cnt], w, h);
 
-	CImage dlg;
-	copy(&image, &dlg);
-
-	int m[9], pixel;
-	for (j = 1; j < h-1; j++) {
-		for (i = 1; i < w-1; i++) {
-			m[0] = dlg.GetPixel(j-1,i-1) >> 16;
-			m[1] = dlg.GetPixel(j-1,i) >> 16;
-			m[2] = dlg.GetPixel(j-1,i+1) >> 16;
-			m[3] = dlg.GetPixel(j,i-1) >> 16;
-			m[4] = dlg.GetPixel(j,i) >> 16;
-			m[5] = dlg.GetPixel(j,i+1) >> 16;
-			m[6] = dlg.GetPixel(j+1,i-1) >> 16;
-			m[7] = dlg.GetPixel(j+1,i) >> 16;
-			m[8] = dlg.GetPixel(j+1,i+1) >> 16;
-
-			std::sort(m, m+9);
-
-			pixel = (m[4] << 16) + (m[4] << 8) + m[4];
-			image.SetPixel(j,i,pixel);
-		}
-	}
-
-	show(&image);
+	CreateDlg("Medean");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnDiffusion()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Diffusion diffusion;
+	if (image == nullptr) return;
 
-	if (diffusion.DoModal() == IDOK)
-	{
-		register int i, x, y;
+	fnDiffusion(&image, m_images[cnt], w, h);
 
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		float lambda = diffusion.lambda;
-		float k = diffusion.k;
-		int iter = diffusion.iter;
-		float k2 = k*k;
-
-		float gradn, grads, grade, gradw;
-		float gcn, gcs, gce, gcw;
-		float tmp;
-
-		float** cpy = new float*[h];
-		for (i = 0; i < h; i++) {
-			cpy[i] = new float[w];
-			memset(cpy[i], 0, sizeof(float)*w);
-		}
-
-		float** buf = new float*[h];
-		for (i = 0; i < h; i++) {
-			buf[i] = new float[w];
-			memset(buf[i], 0, sizeof(float)*w);
-		}
-
-		for (y = 0; y < h; y++) {
-			for (x = 0; x < w; x++) {
-				cpy[y][x] = buf[y][x] = (float) ((unsigned char)image.GetPixel(y,x));
-			}
-		}
-
-		for (i = 0; i < iter; i++) {
-			for (y = 1; y < h-1; y++) {
-				for (x = 1; x < w-1; x++) {
-					tmp = cpy[y][x];
-
-					gradn = cpy[y-1][x] - tmp;
-					grads = cpy[y+1][x] - tmp;
-					grade = cpy[y][x-1] - tmp;
-					gradw = cpy[y][x+1] - tmp;
-					gcn = gradn / (1.0f + gradn*gradn/k2);
-					gcs = grads / (1.0f + grads*grads/k2);
-					gce = grade / (1.0f + grade*grade/k2);
-					gcw = gradw / (1.0f + gradw*gradw/k2);
-
-					buf[y][x] = cpy[y][x] + lambda*(gcn+gcs+gce+gcw);
-				}
-			}
-
-			for (y = 0; y < h; y++) {
-				memcpy(cpy[y], buf[y], sizeof(float)*w);
-			}
-		}
-
-		for (y = 0; y < h; y++) {
-			for (x = 0; x < w; x++) {
-				i = buf[y][x];
-				i += (i << 16) + (i << 8);
-				image.SetPixel(y,x,i);
-			}
-		}
-
-		show(&image);
-
-		for (i = 0; i < h; i++) {
-			delete [] buf[i], cpy[i];
-		}
-		delete [] buf, cpy;
-	}
+	CreateDlg("Diffusion");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnTranslate()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Translate translate;
+	if (image == nullptr) return;
 
-	if (translate.DoModal() == IDOK)
-	{
-		register int i, j;
+	fnTranslate(&image, m_images[cnt], w, h);
 
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-
-		CImage result;
-		result.Create(w,h,24);
-
-		int x, y;
-
-		for (j = 0; j < h; j++) {
-			for (i = 0; i < w; i++) {
-				x = i - translate.m_edit_x;
-				y = j - translate.m_edit_y;
-				if (x >= 0 && x < w && y >= 0 && y < h) {
-					result.SetPixel(j,i,image.GetPixel(y,x));
-				}
-			}
-		}
-
-		show(&result);
-	}
+	CreateDlg("Translate");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnResize()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Resize resize;
-	resize.m_oldWidth = image.GetWidth();
-	resize.m_oldHeight = image.GetHeight();
+	if (image == nullptr) return;
 
-	if (resize.DoModal() == IDOK)
-	{
-		int w = image.GetWidth();
-		int h = image.GetHeight();
-		int nw = resize.m_width;
-		int nh = resize.m_height;
+	char* str = fnResize(&image, m_images[cnt], w, h);
 
-		if (resize.m_interpolation == 0) Nearest(w,h,nw,nh);
-		else if (resize.m_interpolation == 1) Bilinear(w,h,nw,nh);
-		else if (resize.m_interpolation == 2) CubicConvolution(w,h,nw,nh);
-	}
-}
-
-void CbmpLoad2Dlg::Nearest(int w, int h, int nw, int nh)
-{
-	register int i, j;
-
-	obj.Create(nw,nh,24);
-
-	int x,y;
-
-	for (j = 0; j < nh; j++) {
-		for (i = 0; i < nw; i++) {
-			x = (int)w*i/nw;
-			y = (int)h*j/nh;
-
-			obj.SetPixel(j,i,image.GetPixel(y,x));
-		}
-	}
-
-	copy(&obj, &image);
-
-	show(&image);
-}
-
-void CbmpLoad2Dlg::Bilinear(int w, int h, int nw, int nh)
-{
-	register int i, j;
-
-	obj.Create(nw,nh,24);
-
-	int x1, x2, y1, y2;
-	double rx, ry, p, q, temp;
-
-	for (j = 0; j < nh; j++) {
-		for (i = 0; i < nw; i++) {
-			rx = (double)w*i/nw;
-			ry = (double)h*j/nh;
-
-			x1 = (int)rx;
-			y1 = (int)ry;
-			x2 = x1 + 1;
-			if (x2 == w) x2 = w - 1;
-			y2 = y1 + 1;
-			if (y2 == h) y2 = h - 1;
-
-			p = rx - x1;
-			q = ry - y1;
-
-			temp = (1.0-p) * (1.0-q) * (image.GetPixel(y1,x1) >> 16)
-				+ p * (1.0-q) * (image.GetPixel(y1,x2) >> 16)
-				+ (1.0-p) * q * (image.GetPixel(y2,x1) >> 16)
-				+ p * q * (image.GetPixel(y2,x2) >> 16);
-			x1 = temp;
-			x1 += (x1 << 16) + (x1 << 8);
-			obj.SetPixel(j,i,x1);
-		}
-	}
-
-	copy(&obj, &image);
-
-	show(&image);
-}
-
-void CbmpLoad2Dlg::CubicConvolution(int w, int h, int nw, int nh)
-{
-	register int i, j;
-
-	obj.Create(nw,nh,24);
-
-	int x1, x2, x3, x4, y1, y2, y3, y4;
-	double v1, v2, v3, v4, v, rx, ry, p, q;
-
-	for (j = 0; j < nh; j++) {
-		for (i = 0; i < nw; i++) {
-			rx = (double)w*i/nw;
-			ry = (double)h*j/nh;
-
-			x2 = (int)rx;
-			x1 = x2 - 1;
-			if (x1 < 0) x1 = 0;
-			x3 = x2 + 1;
-			if (x3 >= w) x3 = w - 1;
-			x4 = x2 + 2;
-			if (x4 >= w) x4 = w - 1;
-			p = rx - x2;
-
-			y2 = (int)ry;
-			y1 = y2 - 1;
-			if (y1 < 0) y1 = 0;
-			y3 = y2 + 1;
-			if (y3 >= h) y3 = h - 1;
-			y4 = y2 + 2;
-			if (y4 >= h) y4 = h - 1;
-			q = ry - y2;
-
-			v1 = cubic_interpolation((image.GetPixel(y1,x1) >> 16),(image.GetPixel(y1,x2) >> 16),(image.GetPixel(y1,x3) >> 16),(image.GetPixel(y1,x4) >> 16), p);
-			v2 = cubic_interpolation((image.GetPixel(y2,x1) >> 16),(image.GetPixel(y2,x2) >> 16),(image.GetPixel(y2,x3) >> 16),(image.GetPixel(y2,x4) >> 16), p);
-			v3 = cubic_interpolation((image.GetPixel(y3,x1) >> 16),(image.GetPixel(y3,x2) >> 16),(image.GetPixel(y3,x3) >> 16),(image.GetPixel(y3,x4) >> 16), p);
-			v4 = cubic_interpolation((image.GetPixel(y4,x1) >> 16),(image.GetPixel(y4,x2) >> 16),(image.GetPixel(y4,x3) >> 16),(image.GetPixel(y4,x4) >> 16), p);
-
-			v = cubic_interpolation(v1,v2,v3,v4,q);
-			x1 = v;
-			x1 += (x1 << 16) + (x1 << 8);
-			obj.SetPixel(j,i,x1);
-		}
-	}
-
-	copy(&obj, &image);
-
-	show(&image);
-}
-
-double CbmpLoad2Dlg::cubic_interpolation(double v1, double v2, double v3, double v4, double d)
-{
-	double v, p1, p2, p3, p4;
-
-	p1 = v2;
-	p2 = -v1 + v3;
-	p3 = 2*(v1-v2) + v3 - v4;
-	p4 = -v1 + v2 -v3 + v4;
-
-	v = p1 + d*(p2 + d*(p3 + d*p4));
-
-	return v;
+	CreateDlg(str);
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnRotate()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Rotate rotate;
+	if (image == nullptr) return;
 
-	if (rotate.DoModal() == IDOK)
-	{
-		int angle = rotate.m_angel;
+	fnRotate(&image, m_images[cnt], w, h);
 
-		switch (rotate.m_rotate) {
-		case 0:
-			Rotate90(&obj);
-			break;
-		case 1:
-			Rotate180(&obj);
-			break;
-		case 2:
-			Rotate270(&obj);
-			break;
-		case 3:
-			RotateAny(angle, &obj);
-		}
-
-		dlg = new Image(this);
-		dlg->Create(IDD_IMAGE);
-		dlg->ShowWindow(SW_SHOW);
-		dlg->show(&obj, "rotate");
-	}
-}
-
-void CbmpLoad2Dlg::RotateAny(int angle, CImage* cpy)
-{
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	double rad = (angle*PI)/180;
-	double cos_value = cos(rad);
-	double sin_value = sin(rad);
-
-	int nx, ny, minx, miny, maxx, maxy, nw, nh;
-
-	minx = maxx = miny = maxy = 0;
-
-	nx = (int) floor(w*cos_value + 0.5);
-	ny = (int) floor(w*sin_value + 0.5);
-	minx = (minx < nx) ? minx:nx;
-	maxx = (maxx > nx) ? maxx:nx;
-	miny = (miny < ny) ? miny:ny;
-	maxy = (maxy > ny) ? maxy:ny;
-
-	nx = (int) floor(-h*sin_value + 0.5);
-	ny = (int) floor(h*cos_value + 0.5);
-	minx = (minx < nx) ? minx:nx;
-	maxx = (maxx > nx) ? maxx:nx;
-	miny = (miny < ny) ? miny:ny;
-	maxy = (maxy > ny) ? maxy:ny;
-
-	nx = (int) floor(w*cos_value - h*sin_value + 0.5);
-	ny = (int) floor(w*sin_value + h*cos_value + 0.5);
-	minx = (minx < nx) ? minx:nx;
-	maxx = (maxx > nx) ? maxx:nx;
-	miny = (miny < ny) ? miny:ny;
-	maxy = (maxy > ny) ? maxy:ny;
-
-	nw = maxx - minx;
-	nh = maxy - miny;
-
-	cpy->Create(nw,nh,24);
-
-	int x1, x2, y1, y2;
-	double rx, ry, p, q, temp;
-
-	for (j = miny; j < maxy; j++) {
-		for (i = minx; i < maxx; i++) {
-			rx = i*cos_value + j*sin_value;
-			ry = -i*sin_value + j*cos_value;
-
-			if (rx < 0 || rx > w-1 || ry < 0 || ry > h-1) continue;
-
-			x1 = (int)rx;
-			y1 = (int)ry;
-
-			x2 = x1+1;
-			if (x2 == w) x2 = w-1;
-			y2 = y1+1;
-			if (y2 == h) y2 = h-1;
-
-			p = rx - x1;
-			q = ry - y1;
-
-			temp = (1.0-p)*(1.0-q)*(image.GetPixel(y1,x1)>>16) + p*(1.0-q)*(image.GetPixel(y1,x2)>>16)
-				+ (1.0-p)*q*(image.GetPixel(y2,x1)>>16) + p*q*(image.GetPixel(y2,x2)>>16);
-			x1 = temp;
-			x1 += (x1 << 16) + (x1 << 8);
-			cpy->SetPixel(j-miny, i-minx, x1);
-		}
-	}
-}
-
-void CbmpLoad2Dlg::Rotate90(CImage* cpy)
-{
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	cpy->Create(h,w,24);
-
-	int pixel;
-
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
-			pixel = image.GetPixel(i,j);
-			cpy->SetPixel(h-1-j,i,pixel);
-		}
-	}
-}
-
-void CbmpLoad2Dlg::Rotate180(CImage* cpy)
-{
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	cpy->Create(w,h,24);
-
-	int pixel;
-
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
-			pixel = image.GetPixel(i,j);
-			cpy->SetPixel(w-1-i, h-1-j,pixel);
-		}
-	}
-}
-
-void CbmpLoad2Dlg::Rotate270(CImage* cpy)
-{
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	cpy->Create(h,w,24);
-
-	int pixel;
-
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
-			pixel = image.GetPixel(i,j);
-			cpy->SetPixel(j,w-1-i,pixel);
-		}
-	}
+	CreateDlg("Rotate");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMirror()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnMirror(&image, m_images[cnt], w, h);
 
-	CImage cpy;
-	cpy.Create(w,h,24);
-
-	int pixel;
-
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
-			pixel = image.GetPixel(i,j);
-			cpy.SetPixel(w-1-i,j,pixel);
-		}
-	}
-	copy(&cpy, &image);
-	show(&image);
+	CreateDlg("Mirror");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnFlip()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnFlip(&image, m_images[cnt], w, h);
 
-	CImage cpy;
-	cpy.Create(w,h,24);
-
-	int pixel;
-
-	for (i = 0; i < w; i++) {
-		for (j = 0; j < h; j++) {
-			pixel = image.GetPixel(i,j);
-			cpy.SetPixel(i,h-1-j,pixel);
-		}
-	}
-	copy(&cpy, &image);
-	show(&image);
+	CreateDlg("Flip");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnDft()
@@ -1227,8 +525,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnDft()
 	// disabled
 
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	if (image == nullptr) return;
 
 	Fourier fourier;
 	fourier.SetImage(&image);
@@ -1260,82 +557,70 @@ void CbmpLoad2Dlg::OnBnClickedBtnDft()
 void CbmpLoad2Dlg::OnBnClickedBtnDftrc()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	if (image == nullptr) return;
+
+	/*clock_t start, finish;
+	start = clock();*/
 
 	Fourier fourier;
 	fourier.SetImage(&image);
 	fourier.DFTRC(1);
 
-	InitImages();
-	img1.Create(w,h,24);
-	img2.Create(w,h,24);
-	img3.Create(w,h,24);
+	fourier.GetSpectrumImage(m_images[cnt]);
+	CreateDlg("Spectrum");
 
-	fourier.GetSpectrumImage(&img1);
-	dlgs[0] = new Image(this);
-	dlgs[0]->Create(IDD_IMAGE);
-	dlgs[0]->ShowWindow(SW_SHOW);
-	dlgs[0]->show(&img1, "Spectrum");
-
-	fourier.GetphaseImage(&img2);
-	dlgs[1] = new Image(this);
-	dlgs[1]->Create(IDD_IMAGE);
-	dlgs[1]->ShowWindow(SW_SHOW);
-	dlgs[1]->show(&img2, "Phase");
+	fourier.GetphaseImage(m_images[cnt]);
+	CreateDlg("Phase");
 
 	fourier.DFTRC(-1);
-	fourier.GetImage(&img3);
-	dlgs[2] = new Image(this);
-	dlgs[2]->Create(IDD_IMAGE);
-	dlgs[2]->ShowWindow(SW_SHOW);
-	dlgs[2]->show(&img3, "IDFTRC");
+	fourier.GetImage(m_images[cnt]);
+	CreateDlg("IDFTRC");
+
+	/*finish = clock();
+	double duration = (double) (finish - start) / CLOCKS_PER_SEC;
+	char str[32];
+	sprintf_s(str, "debug\n%f sec", duration);
+
+	CreateDlg(str);*/
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnFft()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
+	if (image == nullptr) return;
 	if (!IsPowerOf2(w) || !IsPowerOf2(h)) return;
+
+	/*clock_t start, finish;
+	start = clock();*/
 
 	Fourier fourier;
 	fourier.SetImage(&image);
 	fourier.FFT(1);
+	
+	fourier.GetSpectrumImage(m_images[cnt]);
+	CreateDlg("Spectrum");
 
-	InitImages();
-	img1.Create(w,h,24);
-	img2.Create(w,h,24);
-	img3.Create(w,h,24);
-
-	fourier.GetSpectrumImage(&img1);
-	dlgs[0] = new Image(this);
-	dlgs[0]->Create(IDD_IMAGE);
-	dlgs[0]->ShowWindow(SW_SHOW);
-	dlgs[0]->show(&img1, "Spectrum");
-
-	fourier.GetphaseImage(&img2);
-	dlgs[1] = new Image(this);
-	dlgs[1]->Create(IDD_IMAGE);
-	dlgs[1]->ShowWindow(SW_SHOW);
-	dlgs[1]->show(&img2, "Phase");
+	fourier.GetphaseImage(m_images[cnt]);
+	CreateDlg("Phase");
 
 	fourier.FFT(-1);
-	fourier.GetImage(&img3);
-	dlgs[2] = new Image(this);
-	dlgs[2]->Create(IDD_IMAGE);
-	dlgs[2]->ShowWindow(SW_SHOW);
-	dlgs[2]->show(&img3, "IDFFT");
+	fourier.GetImage(m_images[cnt]);
+	CreateDlg("IDFFT");
+
+	/*finish = clock();
+	double duration = (double) (finish - start) / CLOCKS_PER_SEC;
+	char str[32];
+	sprintf_s(str, "release\n%f sec", duration);
+
+	CreateDlg(str);*/
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnIdealLowpass()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
+	if (image == nullptr) return;
 	if (!IsPowerOf2(w) || !IsPowerOf2(h)) return;
+	//clock_t start = 0, finish;
 
 	Freq_Space fs;
 	fs.m_edit_type = "Lowpass Filter";
@@ -1344,29 +629,36 @@ void CbmpLoad2Dlg::OnBnClickedBtnIdealLowpass()
 
 	if (fs.DoModal() == IDOK)
 	{
+		//start = clock();
+
 		Fourier fourier;
 		fourier.SetImage(&image);
 		fourier.FFT(1);
 		fourier.IdealLowpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		obj.Create(w,h,24);
-
-		fourier.GetImage(&obj);
-		dlg = new Image(this);
-		dlg->Create(IDD_IMAGE);
-		dlg->ShowWindow(SW_SHOW);
-		dlg->show(&obj, "Ideal Lowpass Filtering");
+		fourier.GetImage(m_images[cnt]);
+		CreateDlg("Ideal Lowpass Filtering");
 	}
+
+	/*if (start == 0)
+		return;
+	finish = clock();
+	double duration = (double) (finish - start) / CLOCKS_PER_SEC;
+	char str[32];
+	sprintf_s(str, "%f sec", duration);
+	dlg = new Image(this);
+	dlg->Create(IDD_IMAGE);
+	dlg->ShowWindow(SW_SHOW);
+	dlg->show(nullptr, str);*/
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnIdealHighpass()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
+	if (image == nullptr) return;
 	if (!IsPowerOf2(w) || !IsPowerOf2(h)) return;
+	//clock_t start = 0, finish;
 
 	Freq_Space fs;
 	fs.m_edit_type = "Highpass Filter";
@@ -1375,29 +667,34 @@ void CbmpLoad2Dlg::OnBnClickedBtnIdealHighpass()
 
 	if (fs.DoModal() == IDOK)
 	{
+		//start = clock();
+
 		Fourier fourier;
 		fourier.SetImage(&image);
 		fourier.FFT(1);
 		fourier.IdealHighpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		obj.Create(w,h,24);
-
-		fourier.GetImage(&obj);
-		dlg = new Image(this);
-		dlg->Create(IDD_IMAGE);
-		dlg->ShowWindow(SW_SHOW);
-		dlg->show(&obj, "Ideal Highpass Filtering");
+		fourier.GetImage(m_images[cnt]);
+		CreateDlg("Ideal Highpass Filtering");
 	}
+
+	/*finish = clock();
+	double duration = (double) (finish - start) / CLOCKS_PER_SEC;
+	char str[32];
+	sprintf_s(str, "%f sec", duration);
+	dlg = new Image(this);
+	dlg->Create(IDD_IMAGE);
+	dlg->ShowWindow(SW_SHOW);
+	dlg->show(nullptr, str);*/
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnGaussianLowpass()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
+	if (image == nullptr) return;
 	if (!IsPowerOf2(w) || !IsPowerOf2(h)) return;
+	//clock_t start = 0, finish;
 
 	Freq_Space fs;
 	fs.m_edit_type = "Lowpass Filter";
@@ -1406,29 +703,31 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianLowpass()
 
 	if (fs.DoModal() == IDOK)
 	{
+		//start = clock();
+
 		Fourier fourier;
 		fourier.SetImage(&image);
 		fourier.FFT(1);
 		fourier.GaussianLowpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		obj.Create(w,h,24);
-
-		fourier.GetImage(&obj);
-		dlg = new Image(this);
-		dlg->Create(IDD_IMAGE);
-		dlg->ShowWindow(SW_SHOW);
-		dlg->show(&obj, "Gaussian Lowpass Filtering");
+		fourier.GetImage(m_images[cnt]);
+		CreateDlg("Gaussian Lowpass FIltering");
 	}
+
+	/*finish = clock();
+	double duration = (double) (finish - start) / CLOCKS_PER_SEC;
+	char str[32];
+	sprintf_s(str, "%f sec", duration);
+	CreateDlg(str);*/
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnGaussianHighpass()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
+	if (image == nullptr) return;
 	if (!IsPowerOf2(w) || !IsPowerOf2(h)) return;
+	//clock_t start = 0, finish;
 
 	Freq_Space fs;
 	fs.m_edit_type = "Highpass Filter";
@@ -1437,6 +736,8 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianHighpass()
 
 	if (fs.DoModal() == IDOK)
 	{
+		//start = clock();
+
 		Fourier fourier;
 		fourier.SetImage(&image);
 		fourier.FFT(1);
@@ -1446,1010 +747,307 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianHighpass()
 		obj.Create(w,h,24);
 
 		fourier.GetImage(&obj);
-		dlg = new Image(this);
-		dlg->Create(IDD_IMAGE);
-		dlg->ShowWindow(SW_SHOW);
-		dlg->show(&obj, "Gaussian Highpass Filtering");
+		CreateDlg("Gaussian Highpass Filtering");
 	}
+
+	/*finish = clock();
+	double duration = (double)(finish - start) / CLOCKS_PER_SEC;
+	char str[32];
+	sprintf_s(str, "%f sec", duration);
+	CreateDlg(str);*/
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnEdgeRobert()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnEdgeRoberts(&image, m_images[cnt], w, h);
 
-	obj.Create(w,h,24);
-
-	int h1, h2;
-	double hval;
-	for (j = 1; j < h-1; j++) {
-		for (i = 1; i < w-1; i++) {
-			h1 = (image.GetPixel(j,i)>>16) - (image.GetPixel(j-1,i-1)>>16);
-			h2 = (image.GetPixel(j,i)>>16) - (image.GetPixel(j-1,i+1)>>16);
-
-			hval = sqrt((double)h1*h1 + h2*h2);
-
-			obj.SetPixel(j,i,limit((int)hval));
-		}
-	}
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Edge Robert");
+	CreateDlg("Edge Robert");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnEdgePrewitt()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	EdgePrewitt(&image, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Edge Prewitt");
+	fnEdgePrewitt(&image, m_images[cnt], w, h);
+
+	CreateDlg("Edge Prewitt");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnEdgeSobel()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	fnEdgeSobel(&image, m_images[cnt], w,h);
 
-	obj.Create(w,h,24);
-
-	int h1, h2;
-	double hval;
-	for (j = 1; j < h-1; j++) {
-		for (i = 1; i < w-1; i++) {
-			h1 = (image.GetPixel(j+1,i-1)>>16) + 2*(image.GetPixel(j+1,i)>>16) + (image.GetPixel(j+1,i+1)>>16)
-				- (image.GetPixel(j-1,i-1)>>16) - 2*(image.GetPixel(j-1,i)>>16) - (image.GetPixel(j-1,i+1)>>16);
-			h2 = (image.GetPixel(j-1,i+1)>>16) + 2*(image.GetPixel(j,i+1)>>16) + (image.GetPixel(j+1,i+1)>>16)
-				- (image.GetPixel(j-1,i-1)>>16) - 2*(image.GetPixel(j,i-1)>>16) - (image.GetPixel(j+1,i-1)>>16);
-
-			hval = sqrt((double)h1*h1 + h2*h2);
-
-			obj.SetPixel(j,i,limit((int)hval));
-		}
-	}
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Edge Sobel");
+	CreateDlg("Edge Sobel");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnHough()
 {
-	// 에러 있음
-	// disabled
-
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	if (image == nullptr) return;
 
-	obj.Create(w, h, 24);
+	LineParam line = fnHoughLine(&image, w, h);
+	fnDrawLine(m_images[cnt], line, 255, w, h);
 
-	LineParam line = HoughLine();
-	DrawLine(&obj, line, 255);
+	char str[64] = "Hough\nrho: ", tmp[16];
+	sprintf_s(tmp, "%f", line.rho);
+	std::strcat(str,tmp);
+	std::strcat(str,"\nang: ");
+	sprintf_s(tmp, "%f", line.ang);
+	std::strcat(str,tmp);
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Hough");
-}
-
-LineParam CbmpLoad2Dlg::HoughLine()
-{
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	int num_rho = (int)(sqrt((double)w*w + h*h)*2);
-	int num_ang = 360;
-
-	// 0~PI 각도에 해당하는 sin, cos 함수의 값을 룩업테이블에 저장
-	double* tsin = new double[num_ang];
-	double* tcos = new double[num_ang];
-
-	for (i = 0; i < num_rho; i++) {
-		tsin[i] = (double)sin(i*PI/num_ang);
-		tcos[i] = (double)cos(i*PI/num_ang);
-	}
-
-	// 축적 배열(accumulate dlgsay) 생성
-	int** dlgs = new int*[num_rho];
-	for (i = 0; i < num_rho; i++) {
-		dlgs[i] = new int[num_ang];
-		memset(dlgs[i], 0, sizeof(int)*num_ang);
-	}
-
-	int m,n;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			if ((image.GetPixel(j,i)>>16) > 128) {
-				for (n = 0; n < num_ang; n++) {
-					m = (int) floor(i*tsin[n] + j*tcos[n] + 0.5);
-					m += (num_rho/2);
-
-					dlgs[m][n]++;
-				}
-			}
-		}
-	}
-
-	// 축적 배열에서 최대값 찾기
-	LineParam line;
-	line.rho = line.ang = 0;
-
-	int dlgs_max = 0;
-	for (m = 0; m < num_rho; m++) {
-		for (n = 0; n < num_ang; n++) {
-			if (dlgs[m][n] > dlgs_max) {
-				dlgs_max = dlgs[m][n];
-				line.rho = m - (num_rho/2);
-				line.ang = n*180.0/num_ang;
-			}
-		}
-	}
-
-	// 동적 할당 메모리 해제
-	delete [] tsin, tcos;
-	for (i = 0; i < num_rho; i++) {
-		delete [] dlgs[i];
-	}
-	delete dlgs;
-
-	return line;
-}
-
-void CbmpLoad2Dlg::DrawLine(CImage* obj, LineParam line, BYTE c)
-{
-	register int x, y;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	// 수직선인 경우
-	if (line.ang == 90) {
-		x = (int)(line.rho + 0.5);
-
-		for (y = 0; y < h; y++) {
-			obj->SetPixel(y,x,limit(c));	// byte를 int로 형 변환하고 비트 시프트 해야하는지
-		}
-
-		return;
-	}
-
-	// (rho, ang) 파라미터를 이용하여 직선의 시작 좌표와 끝 좌표를 계산
-	int x1 = 0;
-	int y1 = (int) floor(line.rho / cos(line.ang*PI/180) + 0.5);
-	int x2 = w - 1;
-	int y2 = (int) floor((line.rho - x2*sin(line.ang*PI/180)) / cos(line.ang*PI/180) + 0.5);
-
-	DrawLine(obj, x1, y1, x2, y2, c);
-}
-
-void CbmpLoad2Dlg::DrawLine(CImage* obj, int x1, int y1, int x2, int y2, BYTE c)
-{
-	register int x, y;
-	double m;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	// 수직선인 경우
-	if (x1 == x2) {
-		if (y1 > y2) {
-			swap(y1, y2);
-		}
-
-		for (y = y1; y <= y2; y++) {
-			obj->SetPixel(y,x1,limit(c));
-		}
-
-		return;
-	}
-
-	// (x1, y1)에서 (x2, y2)까지 직선 그리기
-	m = (double) (y2-y1)/(x2-x1);
-
-	if ((m > -1) && (m < 1)) {
-		if (x1 > x2) {
-			swap(x1, x2);
-			swap(y1, y2);
-		}
-
-		for (x = x1; x <= x2; x++) {
-			y = (int)floor(m*(x-x1) + y1 + 0.5);
-			if (y > 0 && y < h) {
-				obj->SetPixel(y,x,limit(c));
-			}
-		}
-	}
-	else {
-		if (y1 > y2) {
-			swap(x1, x2);
-			swap(y1, y2);
-		}
-
-		for (y = y1; y <= y2; y++) {
-			x = (int)floor((y-y1) / m + x1 + 0.5);
-			if (y >= 0 && y < h) {
-				obj->SetPixel(y,x,limit(c));
-			}
-		}
-	}
+	CreateDlg(str);
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnHarris()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Harris hdlgsis;
+	if (image == nullptr) return;
 
-	if (hdlgsis.DoModal() == IDOK)
-	{
-		int th = hdlgsis.m_edit_threshold;
-		CornerPoints cp;
-		cp = HarrisCorner(th);
+	m_images[cnt]->Create(w,h,24);
+	copy(&image, m_images[cnt]);
+	fnHarrisCorner(&image, m_images[cnt], w, h);
 
-		obj.Create(image.GetWidth(), image.GetHeight(), 24);
-		copy(&image, &obj);
-
-		register int i, x, y;
-		for (i = 0; i < cp.num; i++) {
-			x = cp.x[i];
-			y = cp.y[i];
-
-			obj.SetPixel(y-1,x-1,0);
-			obj.SetPixel(y-1,x,0);
-			obj.SetPixel(y-1,x+1,0);
-			obj.SetPixel(y,x-1,0);
-			obj.SetPixel(y,x,0);
-			obj.SetPixel(y,x+1,0);
-			obj.SetPixel(y+1,x-1,0);
-			obj.SetPixel(y+1,x,0);
-			obj.SetPixel(y+1,x+1,0);
-		}
-
-		dlg = new Image(this);
-		dlg->Create(IDD_IMAGE);
-		dlg->ShowWindow(SW_SHOW);
-		dlg->show(&obj, "Harris Corner Points");
-	}
-}
-
-CornerPoints CbmpLoad2Dlg::HarrisCorner(int th)
-{
-	register int i, j, x, y;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	double** dx2 = new double*[h];
-	double** dy2 = new double*[h];
-	double** dxy = new double*[h];
-
-	for (i = 0; i < h; i++) {
-		dx2[i] = new double[w];
-		dy2[i] = new double[w];
-		dxy[i] = new double[w];
-		memset(dx2[i], 0, sizeof(double)*w);
-		memset(dy2[i], 0, sizeof(double)*w);
-		memset(dxy[i], 0, sizeof(double)*w);
-	}
-
-	double tx, ty, tmp;
-	tx = ty = tmp = 0;
-	for (j = 1; j < h-1; j++) {
-		for (i = 1; i < w-1; i++) {
-			// GetPixel return type이 colorref이고 unsigned라 -가 나오면 매우 큰 값으로 바뀌어 하나씩 수행
-			tx = image.GetPixel(j-1,i+1)>>16;
-			tx += image.GetPixel(j,i+1)>>16;
-			tx += image.GetPixel(j+1,i+1)>>16;
-			tx -= image.GetPixel(j-1,i-1)>>16;
-			tx -= image.GetPixel(j,i-1)>>16;
-			tx -= image.GetPixel(j+1,i+1)>>16;
-			tx /= 6.0;
-
-			ty = image.GetPixel(j+1,i-1)>>16;
-			ty += image.GetPixel(j+1,i)>>16;
-			ty += image.GetPixel(j+1,i+1)>>16;
-			ty -= image.GetPixel(j-1,i-1)>>16;
-			ty -= image.GetPixel(j-1,i)>>16;
-			ty -= image.GetPixel(j-1,i+1)>>16;
-			ty /= 6.0;
-
-			dx2[j][i] = tx*tx;
-			tmp = ty * ty;
-			dy2[j][i] = ty*ty;
-			dxy[j][i] = tx*ty;
-		}
-	}
-
-	// Gaussian Filtering
-	double** gdx2 = new double*[h];
-	double** gdy2 = new double*[h];
-	double** gdxy = new double*[h];
-
-	for (i = 0; i < h; i++) {
-		gdx2[i] = new double[w];
-		gdy2[i] = new double[w];
-		gdxy[i] = new double[w];
-		memset(gdx2[i], 0, sizeof(double)*w);
-		memset(gdy2[i], 0, sizeof(double)*w);
-		memset(gdxy[i], 0, sizeof(double)*w);
-	}
-
-	double g[5][5] = {{1,4,6,4,1}, {4,16,24,16,4}, {6,24,36,24,6}, {4,16,24,16,4}, {1,4,6,4,1}};
-
-	for (y = 0; y < 5; y++) {
-		for (x = 0; x < 5; x++) {
-			g[y][x] /= 256.;
-		}
-	}
-
-	double tx2, ty2, txy;
-	for (j = 2; j < h-2; j++) {
-		for (i = 2; i < w-2; i++) {
-			tx2 = ty2 = txy = 0;
-
-			for (y = 0; y < 5; y++) {
-				for (x = 0; x < 5; x++) {
-					tx2 += (dx2[j+y-2][i+x-2]*g[y][x]);
-					ty2 += (dy2[j+y-2][i+x-2]*g[y][x]);
-					txy += (dxy[j+y-2][i+x-2]*g[y][x]);
-				}
-			}
-
-			gdx2[j][i] = tx2;
-			gdy2[j][i] = ty2;
-			gdxy[j][i] = txy;
-		}
-	}
-
-	// 코너 응답 함수 생성
-	double** crf = new double*[h];
-	for (i = 0; i < h; i++) {
-		crf[i] = new double[w];
-		memset(crf[i], 0, sizeof(double)*w);
-	}
-
-	double k = 0.04;
-	for (j = 2; j < h-2; j++) {
-		for (i = 2; i < w-2; i++) {
-			tmp = (gdx2[j][i]*gdy2[j][i] - gdxy[j][i]*gdxy[j][i]) - k*(gdx2[j][i] + gdy2[j][i])*(gdx2[j][i] + gdy2[j][i]);
-			crf[j][i] = tmp;
-		}
-	}
-
-	// 임계값보다 큰 국지적 최대값을 찾아 코너 포인트로 결정
-	CornerPoints cp;
-	cp.num = 0;
-
-	for (j = 2; j < h-2; j++) {
-		for (i = 2; i < w-2; i++) {
-			if (crf[j][i] > th) {
-				if (crf[j][i] > crf[j-1][i] && crf[j][i] > crf[j-1][i+1] &&
-					crf[j][i] > crf[j][i+1] && crf[j][i] > crf[j+1][i+1] &&
-					crf[j][i] > crf[j+1][i] && crf[j][i] > crf[j+1][i-1] &&
-					crf[j][i] > crf[j][i-1] && crf[j][i] > crf[j-1][i-1]) {
-						if (cp.num < MAX_CORNER) {
-							cp.x[cp.num] = i;
-							cp.y[cp.num] = j;
-							cp.num++;
-						}
-				}
-			}
-		}
-	}
-
-	// 동적 할당 메모리 해제
-	for (i = 0; i < h; i++) {
-		delete [] dx2[i], dy2[i], dxy[i], gdx2[i], gdy2[i], gdxy[i], crf[i];
-	}
-	delete [] dx2, dy2, dxy, gdx2, gdy2, gdxy, crf;
-
-	return cp;
+	CreateDlg("Harris Corner Points");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnGrayscale()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i,j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	Grayscale(&image, m_images[cnt], w, h);
 
-	obj.Create(w,h,24);
-
-	BYTE r, g ,b;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			r = image.GetPixel(j,i);
-			g = image.GetPixel(j,i) >> 8;
-			b = image.GetPixel(j,i) >> 16;
-
-			obj.SetPixel(j,i,limit(RGB2GRAY(r,g,b)));
-		}
-	}
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Grayscale");
-}
-
-void CbmpLoad2Dlg::RGB_TO_HSI(double R, double G, double B, double& H, double& S, double& I)
-{
-	I = (R+G+B) / 3;
-
-	if ((R == G) && (G == B)) { // GRAYSCALE인 경우
-		S = 0;
-		H = 0;
-	}
-	else {
-		double min_rgb, temp;
-
-		min_rgb = min(min(R,G), B);
-
-		S = 1 - (min_rgb / I);
-		temp = ((R-G)+(R-B)) / (2*sqrt((R-G)*(R-G) + (R-B)*(G-B)));
-
-		H = acos(temp)*180 / PI;
-
-		if (B > G) H = 360 - H;
-
-		H /= 360;
-	}
-}
-
-void CbmpLoad2Dlg::HSI_TO_RGB(double H, double S, double I, double& R, double& G, double& B)
-{
-	if (I == 0.0) { // 검정색
-		R = 0.0;
-		G = 0.0;
-		B = 0.0;
-		return;
-	}
-
-	if (S == 0.0) { // grayscale
-		R = I;
-		G = I;
-		B = I;
-		return;
-	}
-
-	H *= 360; // [0,1] 범위를 [0,360] 각도 범위로 변경
-
-	if (H <= 120) {
-		B = I*(1-S);
-		R = I*(1 + S*cos(H*PI/180)/cos((60-H)*PI/180));
-		R = limit(R, 0., 1.);
-		G = 3*I - (R+B);
-	}
-	else if (H <= 240) {
-		H -= 120;
-
-		R = I*(1-S);
-		G = I*(1+S*cos(H*PI/180)/cos((60-H)*PI/180));
-		G = limit(G, 0., 1.);
-		B = 3*I - (R+G);
-	}
-	else {
-		H -= 240;
-
-		G = I*(1-S);
-		B = I*(1+S*cos(H*PI/180)/cos((60-H)*PI/180));
-		B = limit(B, 0., 1.);
-		R = 3*I - (G+B);
-	}
-}
-
-void CbmpLoad2Dlg::RGB_TO_YUV(BYTE R, BYTE G, BYTE B, BYTE& Y, BYTE& U, BYTE& V)
-{
-	Y = 0.299*R + 0.587*G + 0.144*B + 0.5;
-	U = -0.169*R - 0.331*G + 0.500*B + 128 + 0.5;
-	V = 0.500*R - 0.419*G - 0.081*B + 128 + 0.5;
-}
-
-void CbmpLoad2Dlg::YUV_TO_RGB(BYTE Y, BYTE U, BYTE V, BYTE& R, BYTE& G, BYTE& B)
-{
-	R = limit((int)(Y + 1.4075*(V-128) + 0.5));
-	G = limit((int)(Y - 0.3455*(U-128) - 0.7169*(V-128) + 0.5));
-	B = limit((int)(Y + 1.7790*(U-128) + 0.5));
-}
-
-void CbmpLoad2Dlg::InitImages()
-{
-	if (!img1.IsNull()) img1.Destroy();
-	if (!img2.IsNull()) img2.Destroy();
-	if (!img3.IsNull()) img3.Destroy();
+	CreateDlg("Gray Scale");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnSplitRgb()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	unsigned char r, g, b;
-
-	InitImages();
-	img1.Create(w,h,24);
-	img2.Create(w,h,24);
-	img3.Create(w,h,24);
-
-	int pixel;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			pixel = image.GetPixel(j,i);
-			r = pixel;
-			g = pixel >> 8;
-			b = pixel >> 16;
-
-			img1.SetPixel(j,i,limit(r));
-			img2.SetPixel(j,i,limit(g));
-			img3.SetPixel(j,i,limit(b));
-		}
-	}
-
-	dlgs[0] = new Image(this);
-	dlgs[0]->Create(IDD_IMAGE);
-	dlgs[0]->ShowWindow(SW_SHOW);
-	dlgs[0]->show(&img1, "Red");
-
-	dlgs[1] = new Image(this);
-	dlgs[1]->Create(IDD_IMAGE);
-	dlgs[1]->ShowWindow(SW_SHOW);
-	dlgs[1]->show(&img2, "Green");
-
-	dlgs[2] = new Image(this);
-	dlgs[2]->Create(IDD_IMAGE);
-	dlgs[2]->ShowWindow(SW_SHOW);
-	dlgs[2]->show(&img3, "Blue");
+	ColorSplitRGB(&image, m_images, w, h, cnt);
+	
+	CreateDlg("Red", "Green", "Blue");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnSplitHsi()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	ColorSplitHSI(&image, m_images, w, h, cnt);
 
-	double r, g, b, hh, ss, ii;
-
-	InitImages();
-	img1.Create(w,h,24);
-	img2.Create(w,h,24);
-	img3.Create(w,h,24);
-
-	int pixel;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			pixel = image.GetPixel(j,i);
-			r = (pixel & 0xFF) / 255.;
-			g = ((pixel & 0xFF00) >> 8) / 255.;
-			b = ((pixel & 0xFF0000) >> 16) / 255.;
-
-			RGB_TO_HSI(r,g,b,hh,ss,ii);
-
-			img1.SetPixel(j,i,limit((int)(hh*255 + 0.5)));
-			img2.SetPixel(j,i,limit((int)(ss*255 + 0.5)));
-			img3.SetPixel(j,i,limit((int)(ii*255 + 0.5)));
-		}
-	}
-
-	dlgs[0] = new Image(this);
-	dlgs[0]->Create(IDD_IMAGE);
-	dlgs[0]->ShowWindow(SW_SHOW);
-	dlgs[0]->show(&img1, "Hue");
-
-	dlgs[1] = new Image(this);
-	dlgs[1]->Create(IDD_IMAGE);
-	dlgs[1]->ShowWindow(SW_SHOW);
-	dlgs[1]->show(&img2, "Saturation");
-
-	dlgs[2] = new Image(this);
-	dlgs[2]->Create(IDD_IMAGE);
-	dlgs[2]->ShowWindow(SW_SHOW);
-	dlgs[2]->show(&img3, "Intensity");
+	CreateDlg("Hue", "Saturation", "Intensity");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnSplitYuv()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	register int i, j;
+	if (image == nullptr) return;
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	InitImages();
-	img1.Create(w,h,24);
-	img2.Create(w,h,24);
-	img3.Create(w,h,24);
-
-	BYTE r, g, b, y, u, v;
-	int pixel;
-
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			pixel = image.GetPixel(j,i);
-			r = pixel & 0xFF;
-			g = (pixel & 0xFF00) >> 8;
-			b = (pixel & 0xFF0000) >> 16;
-
-			RGB_TO_YUV(r,g,b,y,u,v);
-			img1.SetPixel(j,i,limit(y));
-			img2.SetPixel(j,i,limit(u));
-			img3.SetPixel(j,i,limit(v));
-		}
-	}
-
-	dlgs[0] = new Image(this);
-	dlgs[0]->Create(IDD_IMAGE);
-	dlgs[0]->ShowWindow(SW_SHOW);
-	dlgs[0]->show(&img1, "Y, 휘도");
-
-	dlgs[1] = new Image(this);
-	dlgs[1]->Create(IDD_IMAGE);
-	dlgs[1]->ShowWindow(SW_SHOW);
-	dlgs[1]->show(&img2, "U, 청색 색차");
+	ColorSplitYUV(&image, m_images, w,h,cnt);
 	
-	dlgs[2] = new Image(this);
-	dlgs[2]->Create(IDD_IMAGE);
-	dlgs[2]->ShowWindow(SW_SHOW);
-	dlgs[2]->show(&img3, "V, 적색 색차");
+	CreateDlg("Y, luminance", "U, chroma blue", "V, chroma red");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnCombineRgb()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
+	if (image == nullptr) return;
+	if (m_images[cnt-3]->IsNull() || m_images[cnt-2]->IsNull() || m_images[cnt-1]->IsNull()) return;
+	if (m_images[cnt-2]->GetWidth() != w || m_images[cnt-2]->GetHeight() != h || m_images[cnt-1]->GetWidth() != w || m_images[cnt-1]->GetHeight() != h) return;
 
-	register int i, j;
+	ColorCombineRGB(m_images, w, h, cnt);
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
-
-	obj.Create(w,h,24);
-
-	BYTE r,g,b;
-
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			r = img1.GetPixel(j,i);
-			g = img2.GetPixel(j,i);
-			b = img3.GetPixel(j,i);
-
-			obj.SetPixelRGB(j,i,r,g,b);
-		}
-	}
-
-	InitImages();
-	dlgs[0]->ShowWindow(SW_HIDE);
-	dlgs[1]->ShowWindow(SW_HIDE);
-	dlgs[2]->ShowWindow(SW_HIDE);
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Combine RGB");
+	CreateDlg("Combine RGB");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnCombineHsi()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	if (image == nullptr) return;
 	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
-
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
 	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
 
-	obj.Create(w,h,24);
+	ColorCombineHSI(m_images, w, h, cnt);
 
-	double r,g,b,hh,ss,ii;
-
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			hh = (double) (img1.GetPixel(j,i) >> 16) / 255.;
-			ss = (double) (img2.GetPixel(j,i) >> 16) / 255.;
-			ii = (double) (img3.GetPixel(j,i) >> 16) / 255.;
-
-			HSI_TO_RGB(hh,ss,ii,r,g,b);
-			r = r*255 + 0.5;
-			g = g*255 + 0.5;
-			b = b*255 + 0.5;
-			obj.SetPixelRGB(j,i,limit((int)r),limit((int)g),limit((int)b));
-		}
-	}
-
-	InitImages();
-	dlgs[0]->ShowWindow(SW_HIDE);
-	dlgs[1]->ShowWindow(SW_HIDE);
-	dlgs[2]->ShowWindow(SW_HIDE);
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Combine HSI");
+	CreateDlg("Combine HSI");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnCombineYuv()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
+	if (image == nullptr) return;
+	if (m_images[cnt-3]->IsNull() || m_images[cnt-2]->IsNull() || m_images[cnt-1]->IsNull()) return;
+	if (m_images[cnt-2]->GetWidth() != w || m_images[cnt-2]->GetHeight() != h || m_images[cnt-1]->GetWidth() != w || m_images[cnt-1]->GetHeight() != h) return;
 
-	register int i, j;
+	ColorCombineYUV(m_images, w, h, cnt);
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
-
-	obj.Create(w,h,24);
-
-	BYTE y,u,v,r,g,b;
-
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			y = img1.GetPixel(j,i)>>16;
-			u = img2.GetPixel(j,i)>>16;
-			v = img3.GetPixel(j,i)>>16;
-			YUV_TO_RGB(y,u,v,r,g,b);
-
-			obj.SetPixelRGB(j,i,r,g,b);
-		}
-	}
-
-	InitImages();
-	dlgs[0]->ShowWindow(SW_HIDE);
-	dlgs[1]->ShowWindow(SW_HIDE);
-	dlgs[2]->ShowWindow(SW_HIDE);
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Combine YUV");
+	CreateDlg("Combine YUV");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnColorEdge()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
-	register int i, j;
-
-	int w = image.GetWidth();
-	int h = image.GetHeight();
+	if (image == nullptr) return;
 
 	OnBnClickedBtnSplitYuv();
-	CImage obj1, obj2, obj3;
-	EdgePrewitt(&img1, &obj1);
-	EdgePrewitt(&img2, &obj2);
-	EdgePrewitt(&img3, &obj3);
-	InitImages();
+	if (m_images[cnt-3]->IsNull() || m_images[cnt-2]->IsNull() || m_images[cnt-1]->IsNull()) return;
+	
+	ColorEdge(m_images, w, h, cnt);
 
-	obj.Create(w,h,24);
-
-	int tmp;
-	for (j = 0; j < h; j++) {
-		for (i = 0; i < w; i++) {
-			tmp = CalcDist(obj1.GetPixel(j,i)>>16, obj2.GetPixel(j,i)>>16, obj3.GetPixel(j,i)>>16);
-			obj.SetPixel(j,i,limit(tmp));
-		}
-	}
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Color Edge");
-}
-
-double CbmpLoad2Dlg::CalcDist(double x, double y, double z)
-{
-	return sqrt(x*x + y*y + z*z);
+	CreateDlg("Color Edge");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnColorHistEq()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	OnBnClickedBtnSplitYuv();
+	if (image == nullptr) return;
 
-	HistEqul(&img1, &obj);
-	copy(&obj, &img1);
-	OnBnClickedBtnCombineYuv();
+	OnBnClickedBtnSplitYuv();
+	if (m_images[cnt-3]->IsNull() || m_images[cnt-2]->IsNull() || m_images[cnt-1]->IsNull()) return;
+
+	ColorHistEqual(m_images, w, h, cnt);
+	
+	CreateDlg("Color Histogram Equalize");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnBinarize()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Binarize bi;
+	if (image == nullptr) return;
 
-	if (bi.DoModal() == IDOK) {
-		Binarization(&image, &obj, bi.m_edit_threshold);
+	Binarization(&image, m_images[cnt], w, h);
 
-		dlg = new Image(this);
-		dlg->Create(IDD_IMAGE);
-		dlg->ShowWindow(SW_SHOW);
-		dlg->show(&obj, "Binarization");
-	}
+	CreateDlg("Binarization");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnBinarizationIter()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	Binarize bi;
+	if (image == nullptr) return;
 
-	int th = BinarizationIterative(&image);
+	int th = BinarizationIterative(&image, w, h);
+	Binarization(&image, m_images[cnt], w, h, th);
 
 	char str[32] = "Binarization\nTreshold: ";
 	char tmp[4];
 	sprintf_s(tmp,"%d", th);
 	std::strcat(str,tmp);
-
-	Binarization(&image, &obj, th);
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, str);
+	CreateDlg(str);
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnLabeling()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	int nLabel = Labeling(&image, &obj);
+	// b_abcdef.bmp, apply -> Histogram Equal
+	if (image == nullptr) return;
 
-	char str[32] = "레이블 개수 = ";
+	int nLabel = Labeling(&image, m_images[cnt],w,h);
+
+	char str[32] = "label count = ";
 	char tmp[6];
 	sprintf_s(tmp,"%d", nLabel);
 	std::strcat(str,tmp);
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, str);
+	CreateDlg(str);
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnContourTracing()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	ContourPoints cp = ContourTracing(&image, &obj);
+	// char.bmp, boat.bmp
+	if (image == nullptr) return;
 
-	register int i;
+	ContourTracing(&image, m_images[cnt], w, h);
 
-	int w = image.GetWidth();
-	int h = image.GetHeight();
-
-	obj.Create(w,h,24);
-	for (i = 0; i < cp.num; i++) {
-		obj.SetPixelRGB(cp.y[i], cp.x[i], 255,255,255);
-	}
-
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Contour Tracing");
+	CreateDlg("Contour Tracing");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphErosion()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	copy(&image, &obj);
-	MorphologyErosion(&image, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Erosion");
+	copy(&image, m_images[cnt]);
+	MorphologyErosion(&image, m_images[cnt],w,h);
+
+	CreateDlg("Morphology Erosion");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphDilation()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	copy(&image, &obj);
-	MorphologyDilation(&image, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Dilation");
+	copy(&image, m_images[cnt]);
+	MorphologyDilation(&image, m_images[cnt],w,h);
+
+	CreateDlg("Morphology Dilation");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphOpening()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	copy(&image, &obj);
-	MorphologyErosion(&image, &obj);
-	CImage tmp;
-	copy(&obj, &tmp);
-	MorphologyDilation(&tmp, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Opening");
+	MorphologyOpening(&image, m_images[cnt], w,h);
+
+	CreateDlg("Morphology Opening");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphClosing()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	copy(&image, &obj);
-	MorphologyDilation(&image, &obj);
-	CImage tmp;
-	copy(&obj, &tmp);
-	MorphologyErosion(&tmp, &obj);
-	
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Closing");
+	if (image == nullptr) return;
+
+	MorphologyClosing(&image, m_images[cnt],w,h);
+
+	CreateDlg("Morphology Closing");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayErosion()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	obj.Create(image.GetWidth(), image.GetHeight(), 24);
-	MorphologyGrayErosion(&image, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Gray Erosion");
+	MorphologyGrayErosion(&image, m_images[cnt],w,h);
+
+	CreateDlg("Morphology Gray Erosion");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayDilation()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	obj.Create(image.GetWidth(), image.GetHeight(), 24);
-	MorphologyGrayDilation(&image, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Gray Dilation");
+	MorphologyGrayDilation(&image, m_images[cnt], w,h);
+
+	CreateDlg("Morphology Gray Dilation");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayOpening()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	obj.Create(image.GetWidth(), image.GetHeight(), 24);
-	MorphologyGrayErosion(&image, &obj);
-	CImage tmp;
-	copy(&obj, &tmp);
-	MorphologyGrayDilation(&tmp, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Gray Opening");
+	MorphologyGrayOpening(&image, m_images[cnt], w,h);
+
+	CreateDlg("Morphology Gray Opening");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnMorphGrayClosing()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	obj.Create(image.GetWidth(), image.GetHeight(), 24);
-	MorphologyGrayDilation(&image, &obj);
-	CImage tmp;
-	copy(&obj, &tmp);
-	MorphologyGrayErosion(&tmp, &obj);
+	if (image == nullptr) return;
 
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&obj, "Morphology Gray Closing");
+	MorphologyGrayClosing(&image, m_images[cnt], w,h);
+
+	CreateDlg("Morphology Gray Closing");
 }

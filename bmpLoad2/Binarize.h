@@ -1,6 +1,7 @@
 #pragma once
 #include "afxwin.h"
 #include "afxcmn.h"
+#include "resource.h"
 
 
 // Binarize 대화 상자입니다.
