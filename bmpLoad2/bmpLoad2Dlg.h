@@ -31,10 +31,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CStatic m_picture_control;
-	CImage image, img1, img2, img3, obj;
+	CImage image;
 	std::vector <CImage*> m_images;
-	Image* dlg;
-	Image** dlgs;
 	std::vector <Image*> m_dlgs;
 	int w, h, cnt;
 

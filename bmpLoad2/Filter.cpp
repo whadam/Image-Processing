@@ -123,6 +123,8 @@ void fnLaplacian(CImage* image, CImage* obj, int w, int h)
 	register int i, j;
 	int value;
 
+	obj->Create(w,h,24);
+
 	for (j = 1; j < h-1; j++) {
 		for (i = 1; i < w-1; i++) {
 			value = 4*(image->GetPixel(j,i) >> 16) - (image->GetPixel(j-1,i) >> 16) - (image->GetPixel(j,i+1) >> 16)

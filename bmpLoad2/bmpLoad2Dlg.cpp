@@ -169,7 +169,6 @@ BOOL CbmpLoad2Dlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 작은 아이콘을 설정합니다.
 
 	// TODO: 여기에 추가 초기화 작업을 추가합니다.
-	dlgs = new Image*[3];
 	for (int i = 0; i < 12; i++)
 	{
 		m_images.push_back(new CImage);
@@ -534,24 +533,24 @@ void CbmpLoad2Dlg::OnBnClickedBtnDft()
 	CImage cpy;
 	cpy.Create(w,h,24);
 
-	fourier.GetSpectrumImage(&cpy);
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&cpy, "Spectrum");
+	//fourier.GetSpectrumImage(&cpy);
+	//dlg = new Image(this);
+	//dlg->Create(IDD_IMAGE);
+	//dlg->ShowWindow(SW_SHOW);
+	//dlg->show(&cpy, "Spectrum");
 
-	fourier.GetphaseImage(&cpy);
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&cpy, "Phase");
+	//fourier.GetphaseImage(&cpy);
+	//dlg = new Image(this);
+	//dlg->Create(IDD_IMAGE);
+	//dlg->ShowWindow(SW_SHOW);
+	//dlg->show(&cpy, "Phase");
 
-	fourier.DFT(-1);
-	fourier.GetImage(&cpy);
-	dlg = new Image(this);
-	dlg->Create(IDD_IMAGE);
-	dlg->ShowWindow(SW_SHOW);
-	dlg->show(&cpy, "IDFT");
+	//fourier.DFT(-1);
+	//fourier.GetImage(&cpy);
+	//dlg = new Image(this);
+	//dlg->Create(IDD_IMAGE);
+	//dlg->ShowWindow(SW_SHOW);
+	//dlg->show(&cpy, "IDFT");
 }
 
 void CbmpLoad2Dlg::OnBnClickedBtnDftrc()
@@ -744,9 +743,7 @@ void CbmpLoad2Dlg::OnBnClickedBtnGaussianHighpass()
 		fourier.GaussianHighpass(fs.m_edit_cutoff);
 		fourier.FFT(-1);
 
-		obj.Create(w,h,24);
-
-		fourier.GetImage(&obj);
+		fourier.GetImage(m_images[cnt]);
 		CreateDlg("Gaussian Highpass Filtering");
 	}
 
@@ -873,8 +870,8 @@ void CbmpLoad2Dlg::OnBnClickedBtnCombineHsi()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	if (image == nullptr) return;
-	if (img1.IsNull() || img2.IsNull() || img3.IsNull()) return;
-	if (img2.GetWidth() != w || img2.GetHeight() != h || img3.GetWidth() != w || img3.GetHeight() != h) return;
+	if (m_images[cnt-3]->IsNull() || m_images[cnt-2]->IsNull() || m_images[cnt-1]->IsNull()) return;
+	if (m_images[cnt-2]->GetWidth() != w || m_images[cnt-2]->GetHeight() != h || m_images[cnt-1]->GetWidth() != w || m_images[cnt-1]->GetHeight() != h) return;
 
 	ColorCombineHSI(m_images, w, h, cnt);
 

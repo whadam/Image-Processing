@@ -23,10 +23,10 @@ public:
 	CStatic m_image_control;
 	CImage* tmp;
 	CbmpLoad2Dlg* parent;
-
-	void show(CImage* image, char*);
-	afx_msg void OnBnClickedOk();
 	CString m_name;
+	void show(CImage* image, char*);
+
+	afx_msg void OnBnClickedOk();	
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnBnClickedBtnApply();
 };
